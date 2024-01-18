@@ -49,6 +49,11 @@ class Player:
         return self.x, self.y
     
     def movement(self):
+        current_x_pos, current_y_pos = self.pos
+        # collision detection
+        # if map[int(current_y_pos // 100)][int(current_x_pos // 100)] == 'W':
+        #     self.x, self.y = current_x_pos - 2 * self.player_speed * math.cos(self.angle), current_y_pos - 2 * self.player_speed * math.sin(self.angle)
+            
         cos_a = math.cos(self.angle)
         sin_a = math.sin(self.angle)
         keys = pygame.key.get_pressed()
@@ -65,9 +70,9 @@ class Player:
             self.x += -self.player_speed * sin_a
             self.y += self.player_speed * cos_a
         if keys[pygame.K_LEFT]:
-            self.angle -= 0.10
+            self.angle -= 0.05
         if keys[pygame.K_RIGHT]:
-            self.angle += 0.10
+            self.angle += 0.05
     
 
 
@@ -119,8 +124,8 @@ while True:
     for x, y in world_map:
         pygame.draw.rect(sc, (255, 255, 255), (x, y, 100, 100), 2) """
     # draw background
-    pygame.draw.rect(sc, (0, 255, 0), (0, 0, WIDTH, HEIGHT // 2))
-    pygame.draw.rect(sc, (0, 0, 255), (0, HEIGHT // 2, WIDTH, HEIGHT // 2))
+    pygame.draw.rect(sc, (0, 255, 0), (0, HEIGHT // 2, WIDTH, HEIGHT // 2))
+    pygame.draw.rect(sc, (0, 0, 255), (0, 0, WIDTH, HEIGHT // 2))
     
     # draw the rays
     ray_cast(player)
