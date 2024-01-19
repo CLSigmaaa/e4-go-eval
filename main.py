@@ -7,11 +7,13 @@ HEIGHT = 700
 FOV = math.pi / 3
 HALF_FOV = FOV / 2
 
+CELL_SIZE = 100
+
 NUM_RAYS = 200
 DELTA_ANGLE = FOV / NUM_RAYS
 
 SCREEN_DIST = WIDTH / 2*math.tan(HALF_FOV)
-PROJ_COEFF = 2*SCREEN_DIST*100
+PROJ_COEFF = 2*SCREEN_DIST*CELL_SIZE
 SCALE = WIDTH // NUM_RAYS
 
 
@@ -36,7 +38,7 @@ world_map = set()
 for j, row in enumerate(map):
     for i, char in enumerate(row):
         if char == 'W':
-            world_map.add((i * 100, j * 100))
+            world_map.add((i * CELL_SIZE, j * CELL_SIZE))
 
 class Player:
     def __init__(self) -> None:
@@ -82,7 +84,7 @@ class Player:
             self.angle += 0.05
 
     def check_collision(self, x, y):
-        map_x, map_y = int(x // 100), int(y // 100)
+        map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
         if (0 <= map_x < len(map[0])) and (0 <= map_y < len(map)):
             if map[map_y][map_x] == 'W':
                 return True
@@ -102,7 +104,7 @@ def ray_cast(player: Player):
         for depth in range(WIDTH):
             x = pos_x + depth * cos_a
             y = pos_y + depth * sin_a
-            map_x, map_y = int(x // 100), int(y // 100)
+            map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
             if (0 <= map_x < len(map[0])) and (0 <= map_y < len(map)):
                 if map[map_y][map_x] == 'W':
                     # pygame.draw.circle(sc, (0, 255, 255), (int(x), int(y)), 2)
@@ -123,8 +125,8 @@ while True:
     
     player.movement()
     sc.fill((0, 0, 0))
-    
-    """ # draw the player
+    """
+    # draw the player
     pygame.draw.circle(sc, (255, 255, 255), (int(player.x), int(player.y)), 10)
     
     # draw the player direction
@@ -136,7 +138,8 @@ while True:
     
     # draw the walls
     for x, y in world_map:
-        pygame.draw.rect(sc, (255, 255, 255), (x, y, 100, 100), 2) """
+        pygame.draw.rect(sc, (255, 255, 255), (x, y, CELL_SIZE, CELL_SIZE), 2)
+    """
     # draw background
     pygame.draw.rect(sc, (0, 255, 0), (0, HEIGHT // 2, WIDTH, HEIGHT // 2))
     pygame.draw.rect(sc, (0, 0, 255), (0, 0, WIDTH, HEIGHT // 2))
