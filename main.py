@@ -16,13 +16,12 @@ SCREEN_DIST = WIDTH / 2*math.tan(HALF_FOV)
 PROJ_COEFF = 2*SCREEN_DIST*CELL_SIZE
 SCALE = WIDTH // NUM_RAYS
 
+MAX_FPS = 60
 
 pygame.init()
 
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
-
-
 
 map = [
     ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
@@ -91,11 +90,14 @@ class Player:
         return False
     
 
-
 player = Player()
 
-
 def ray_cast(player: Player):
+    # draw background
+    pygame.draw.rect(sc, (0, 255, 0), (0, HEIGHT // 2, WIDTH, HEIGHT // 2))
+    pygame.draw.rect(sc, (0, 0, 255), (0, 0, WIDTH, HEIGHT // 2))
+    
+    # actual ray casting
     curr_angle = player.angle - HALF_FOV
     pos_x, pos_y = player.pos
     for ray in range(NUM_RAYS):
@@ -116,16 +118,7 @@ def ray_cast(player: Player):
                     break
         curr_angle += DELTA_ANGLE
 
-
-while True:
-    # dt = clock.tick(60) / 1000
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            exit()
-    
-    player.movement()
-    sc.fill((0, 0, 0))
-    """
+def no_ray_cast(player: Player):
     # draw the player
     pygame.draw.circle(sc, (255, 255, 255), (int(player.x), int(player.y)), 10)
     
@@ -139,15 +132,20 @@ while True:
     # draw the walls
     for x, y in world_map:
         pygame.draw.rect(sc, (255, 255, 255), (x, y, CELL_SIZE, CELL_SIZE), 2)
-    """
-    # draw background
-    pygame.draw.rect(sc, (0, 255, 0), (0, HEIGHT // 2, WIDTH, HEIGHT // 2))
-    pygame.draw.rect(sc, (0, 0, 255), (0, 0, WIDTH, HEIGHT // 2))
+
+while True:
+    # dt = clock.tick(60) / 1000
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
     
-    # draw the rays
+    player.movement()
+    sc.fill((0, 0, 0))
+
+    # no_ray_cast(player)
     ray_cast(player)
-        
-    # show the player variables on screen
+    
+    # Debug info
     # font = pygame.font.SysFont('Arial', 20, bold=True)
     # text_fps = font.render('FPS : ' + str(int(clock.get_fps())), True, pygame.Color('white'))
     # text_x = font.render('Player X:' + str(int(player.x)), True, pygame.Color('white'))
@@ -158,6 +156,5 @@ while True:
     # sc.blit(text_y, (50, 150))
     # sc.blit(text_angle, (50, 200))
     
-    
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(MAX_FPS)
