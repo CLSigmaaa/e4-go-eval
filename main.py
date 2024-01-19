@@ -49,30 +49,44 @@ class Player:
         return self.x, self.y
     
     def movement(self):
-        current_x_pos, current_y_pos = self.pos
-        # collision detection
-        # if map[int(current_y_pos // 100)][int(current_x_pos // 100)] == 'W':
-        #     self.x, self.y = current_x_pos - 2 * self.player_speed * math.cos(self.angle), current_y_pos - 2 * self.player_speed * math.sin(self.angle)
-            
         cos_a = math.cos(self.angle)
         sin_a = math.sin(self.angle)
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            self.x += self.player_speed * cos_a
-            self.y += self.player_speed * sin_a
+        if keys[pygame.K_z]:
+            new_x = self.x + self.player_speed * cos_a
+            new_y = self.y + self.player_speed * sin_a
+            if not self.check_collision(new_x, new_y):
+                self.x = new_x
+                self.y = new_y
         if keys[pygame.K_s]:
-            self.x += -self.player_speed * cos_a
-            self.y += -self.player_speed * sin_a
+            new_x = self.x - self.player_speed * cos_a
+            new_y = self.y - self.player_speed * sin_a
+            if not self.check_collision(new_x, new_y):
+                self.x = new_x
+                self.y = new_y
         if keys[pygame.K_a]:
-            self.x += self.player_speed * sin_a
-            self.y += -self.player_speed * cos_a
+            new_x = self.x + self.player_speed * sin_a
+            new_y = self.y - self.player_speed * cos_a
+            if not self.check_collision(new_x, new_y):
+                self.x = new_x
+                self.y = new_y
         if keys[pygame.K_d]:
-            self.x += -self.player_speed * sin_a
-            self.y += self.player_speed * cos_a
+            new_x = self.x - self.player_speed * sin_a
+            new_y = self.y + self.player_speed * cos_a
+            if not self.check_collision(new_x, new_y):
+                self.x = new_x
+                self.y = new_y
         if keys[pygame.K_LEFT]:
             self.angle -= 0.05
         if keys[pygame.K_RIGHT]:
             self.angle += 0.05
+
+    def check_collision(self, x, y):
+        map_x, map_y = int(x // 100), int(y // 100)
+        if (0 <= map_x < len(map[0])) and (0 <= map_y < len(map)):
+            if map[map_y][map_x] == 'W':
+                return True
+        return False
     
 
 
