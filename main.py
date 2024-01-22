@@ -1,5 +1,6 @@
 import pygame
 import math
+import time
 
 WIDTH = 1200
 HEIGHT = 700
@@ -9,14 +10,14 @@ HALF_FOV = FOV / 2
 
 CELL_SIZE = 100
 
-NUM_RAYS = 200
+NUM_RAYS = 100
 DELTA_ANGLE = FOV / NUM_RAYS
 
 SCREEN_DIST = WIDTH / 2*math.tan(HALF_FOV)
 PROJ_COEFF = 2*SCREEN_DIST*CELL_SIZE
 SCALE = WIDTH // NUM_RAYS
 
-MAX_FPS = 60
+MAX_FPS = 600
 
 pygame.init()
 
@@ -43,44 +44,44 @@ class Player:
     def __init__(self) -> None:
         self.x, self.y = WIDTH // 2, HEIGHT // 2
         self.angle = 0
-        self.player_speed = 3
+        self.player_speed = 150
         
     @property
     def pos(self):
         return self.x, self.y
     
-    def movement(self):
+    def movement(self, dt):
         cos_a = math.cos(self.angle)
         sin_a = math.sin(self.angle)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_z]:
-            new_x = self.x + self.player_speed * cos_a
-            new_y = self.y + self.player_speed * sin_a
+            new_x = self.x + self.player_speed * cos_a * dt
+            new_y = self.y + self.player_speed * sin_a * dt
             if not self.check_collision(new_x, new_y):
                 self.x = new_x
                 self.y = new_y
         if keys[pygame.K_s]:
-            new_x = self.x - self.player_speed * cos_a
-            new_y = self.y - self.player_speed * sin_a
+            new_x = self.x - self.player_speed * cos_a * dt
+            new_y = self.y - self.player_speed * sin_a * dt
             if not self.check_collision(new_x, new_y):
                 self.x = new_x
                 self.y = new_y
         if keys[pygame.K_a]:
-            new_x = self.x + self.player_speed * sin_a
-            new_y = self.y - self.player_speed * cos_a
+            new_x = self.x + self.player_speed * sin_a * dt
+            new_y = self.y - self.player_speed * cos_a * dt
             if not self.check_collision(new_x, new_y):
                 self.x = new_x
                 self.y = new_y
         if keys[pygame.K_d]:
-            new_x = self.x - self.player_speed * sin_a
-            new_y = self.y + self.player_speed * cos_a
+            new_x = self.x - self.player_speed * sin_a * dt
+            new_y = self.y + self.player_speed * cos_a * dt
             if not self.check_collision(new_x, new_y):
                 self.x = new_x
                 self.y = new_y
         if keys[pygame.K_LEFT]:
-            self.angle -= 0.05
+            self.angle -= 2.25 * dt
         if keys[pygame.K_RIGHT]:
-            self.angle += 0.05
+            self.angle += 2.25 * dt
 
     def check_collision(self, x, y):
         map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
@@ -103,13 +104,12 @@ def ray_cast(player: Player):
     for ray in range(NUM_RAYS):
         sin_a = math.sin(curr_angle)
         cos_a = math.cos(curr_angle)
-        for depth in range(WIDTH):
+        for depth in range(int(WIDTH)):
             x = pos_x + depth * cos_a
             y = pos_y + depth * sin_a
             map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
             if (0 <= map_x < len(map[0])) and (0 <= map_y < len(map)):
                 if map[map_y][map_x] == 'W':
-                    # pygame.draw.circle(sc, (0, 255, 255), (int(x), int(y)), 2)
                     depth *= math.cos(player.angle - curr_angle) # fix the fisheye effect
                     proj_height = PROJ_COEFF / (depth + 0.00001)
                     c = 255 / (1 + depth * depth * 0.00001)
@@ -133,28 +133,33 @@ def no_ray_cast(player: Player):
     for x, y in world_map:
         pygame.draw.rect(sc, (255, 255, 255), (x, y, CELL_SIZE, CELL_SIZE), 2)
 
+
+prev_time = time.time()
 while True:
-    # dt = clock.tick(60) / 1000
+    clock.tick(MAX_FPS)
+    
+    dt = time.time() - prev_time
+    prev_time = time.time()
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
     
-    player.movement()
+    player.movement(dt)
     sc.fill((0, 0, 0))
 
     # no_ray_cast(player)
     ray_cast(player)
     
     # Debug info
-    # font = pygame.font.SysFont('Arial', 20, bold=True)
-    # text_fps = font.render('FPS : ' + str(int(clock.get_fps())), True, pygame.Color('white'))
-    # text_x = font.render('Player X:' + str(int(player.x)), True, pygame.Color('white'))
-    # text_y = font.render('Player Y: ' + str(int(player.y)), True, pygame.Color('white'))
-    # text_angle = font.render('Player Angle : ' + str(int(math.degrees(player.angle) % 360)), True, pygame.Color('white'))
-    # sc.blit(text_fps, (50, 50))
-    # sc.blit(text_x, (50, 100))
-    # sc.blit(text_y, (50, 150))
-    # sc.blit(text_angle, (50, 200))
+    font = pygame.font.SysFont('Arial', 20, bold=True)
+    text_fps = font.render('FPS : ' + str(int(clock.get_fps())), True, pygame.Color('white'))
+    text_x = font.render('Player X:' + str(int(player.x)), True, pygame.Color('white'))
+    text_y = font.render('Player Y: ' + str(int(player.y)), True, pygame.Color('white'))
+    text_angle = font.render('Player Angle : ' + str(int(math.degrees(player.angle) % 360)), True, pygame.Color('white'))
+    sc.blit(text_fps, (50, 50))
+    sc.blit(text_x, (50, 100))
+    sc.blit(text_y, (50, 150))
+    sc.blit(text_angle, (50, 200))
     
     pygame.display.flip()
-    clock.tick(MAX_FPS)
