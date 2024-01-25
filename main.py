@@ -183,8 +183,7 @@ def ray_cast(player: Player):
     pygame.draw.rect(sc, (30, 30, 30), (0, HALF_HEIGHT, WIDTH, HEIGHT))
 
     # draw sky
-    sky_offset = -60
-    sky_offset = (sky_offset + 920 * player.angle) % WIDTH  # Change '+' to '-'
+    sky_offset = (player.angle * 1840) % WIDTH
 
     sc.blit(sky_texture, (-sky_offset, 0))
     sc.blit(sky_texture, (-sky_offset + WIDTH, 0))
