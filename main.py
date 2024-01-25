@@ -4,9 +4,9 @@ import time
 import numpy as np
 import random
 
-WIDTH = 1200
+WIDTH = 1920
 HALF_WIDTH = WIDTH // 2
-HEIGHT = 700
+HEIGHT = 1080
 HALF_HEIGHT = HEIGHT // 2
 
 FOV = math.pi / 3
@@ -18,7 +18,7 @@ NUM_RAYS = WIDTH // 5
 DELTA_ANGLE = FOV / NUM_RAYS
 
 DIST = NUM_RAYS / (2 * math.tan(HALF_FOV))
-PROJ_COEFF = 2 * DIST * CELL_SIZE
+PROJ_COEFF = 3 * DIST * CELL_SIZE
 SCALE = WIDTH // NUM_RAYS
 
 MINI_MAP_SCALE = 4
@@ -37,6 +37,9 @@ HALF_TEXTURE_SIZE = TEXTURE_SIZE // 2
 pygame.init()
 
 wall_texture = pygame.image.load('./ressources/textures/1.png')
+sky_texture = pygame.image.load('./ressources/textures/sky.png')
+sky_texture = pygame.transform.scale(sky_texture, (WIDTH, HEIGHT // 2))
+sky_offset = 0
 
 textures = {
     'W': wall_texture
@@ -128,9 +131,9 @@ class Player:
                 self.x = new_x
                 self.y = new_y
         if keys[pygame.K_LEFT]:
-            self.angle -= 2.25 * dt
+            self.angle -= 1.75 * dt
         if keys[pygame.K_RIGHT]:
-            self.angle += 2.25 * dt
+            self.angle += 1.75 * dt
 
     def check_collision(self, x, y):
         map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
@@ -176,8 +179,18 @@ def display_mini_map():
 
 def ray_cast(player: Player):
     # draw background
-    pygame.draw.rect(sc, (0, 255, 0), (0, HEIGHT // 2, WIDTH, HEIGHT // 2))
-    pygame.draw.rect(sc, (0, 0, 255), (0, 0, WIDTH, HEIGHT // 2))
+    # pygame.draw.rect(sc, (0, 255, 0), (0, HEIGHT // 2, WIDTH, HEIGHT // 2))
+    pygame.draw.rect(sc, (30, 30, 30), (0, HALF_HEIGHT, WIDTH, HEIGHT))
+
+    # draw sky
+    sky_offset = -60
+    sky_offset = (sky_offset + 920 * player.angle) % WIDTH  # Change '+' to '-'
+
+    sc.blit(sky_texture, (-sky_offset, 0))
+    sc.blit(sky_texture, (-sky_offset + WIDTH, 0))
+        
+    
+
     
     # On récupère la position du joueur
     ox, oy = player.pos
@@ -276,15 +289,15 @@ while True:
     display_mini_map()
 
     # Debug info
-    # font = pygame.font.SysFont('Arial', 20, bold=True)
-    # text_fps = font.render('FPS : ' + str(int(clock.get_fps())), True, pygame.Color('white'))
+    font = pygame.font.SysFont('Arial', 20, bold=True)
+    text_fps = font.render('FPS : ' + str(int(clock.get_fps())), True, pygame.Color('white'))
     # text_x = font.render('Player X:' + str(int(player.x)), True, pygame.Color('white'))
     # text_y = font.render('Player Y: ' + str(int(player.y)), True, pygame.Color('white'))
     # map_pos = player.map_pos
     # text_map_x = font.render('Player Map Pos X: ' + str(map_pos[0]), True, pygame.Color('white'))
     # text_map_y = font.render('Player Map Pos Y: ' + str(map_pos[1]), True, pygame.Color('white'))
     # text_angle = font.render('Player Angle : ' + str(int(math.degrees(player.angle) % 360)), True, pygame.Color('white'))
-    # sc.blit(text_fps, (50, 50))
+    sc.blit(text_fps, (50, 50))
     # sc.blit(text_x, (50, 100))
     # sc.blit(text_y, (50, 150))
     # sc.blit(text_angle, (50, 200))
