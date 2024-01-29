@@ -30,6 +30,7 @@ MAX_MAP_SIZE_HEIGHT = HEIGHT // CELL_SIZE
 
 TEXTURE_SIZE = 256
 HALF_TEXTURE_SIZE = TEXTURE_SIZE // 2
+TEXTURE_SCALE = TEXTURE_SIZE // CELL_SIZE
 
 MOUSE_BORDER_LEFT = 100
 MOUSE_BORDER_RIGHT = WIDTH - 100
@@ -42,6 +43,7 @@ WALL_HEIGHT = CELL_SIZE * 3
 pygame.init()
 
 wall_texture = pygame.image.load('./ressources/textures/1.png')
+wall_texture = pygame.transform.scale(wall_texture, (TEXTURE_SIZE, TEXTURE_SIZE))
 sky_texture = pygame.image.load('./ressources/textures/sky.png')
 sky_texture = pygame.transform.scale(sky_texture, (WIDTH, HEIGHT // 2))
 sky_offset = 0
@@ -218,69 +220,35 @@ def ray_cast(player: Player):
         # On calcule le cosinus et le sinus de l'angle actuel
         sin_a = math.sin(curr_angle)
         cos_a = math.cos(curr_angle)
-        
-        # On regarde si le rayon rentre en collision avec une ligne verticale de la grid
-        # Si le cosinus est positif, on regarde à droite, sinon à gauche
-        x, dx = (x_map + CELL_SIZE, 1) if cos_a >= 0 else (x_map, -1)
-        
-        # On calcule la profondeur du rayon
-        for _ in range(0, WIDTH, CELL_SIZE):
-            # depth_v est l'hypothénuse du triangle rectangle formé par le rayon et la ligne verticale
-            # sachant que cos_a = adjacent / hypotenuse, on peut calculer l'hypothénuse
-            # adjacent = x - ox
-            # donc hypotenuse = adjacent / cos_a
-            depth_v = (x - ox) / cos_a
-            
-            # On calcule la position y du rayon
-            y = oy + depth_v * sin_a
-            
-            # On regarde si la ligne verticale avec laquelle on a fait la collision est dans la world_map
-            # C'est-à-dire si elle est un mur
-            if mapping(x + dx, y) in world_map:
-                # dans ce cas, on sort de la boucle
-                break
-            # Sinon, on continue de regarder la ligne verticale suivante
-            x += dx * CELL_SIZE
-        
-        # Même chose pour les lignes horizontales
+
         y, dy = (y_map + CELL_SIZE, 1) if sin_a >= 0 else (y_map, -1)
         for _ in range(0, HEIGHT, CELL_SIZE):
             depth_h = (y - oy) / sin_a
             x = ox + depth_h * cos_a
             if mapping(x, y + dy) in world_map:
+                texture_offset_x = x % CELL_SIZE
                 break
             y += dy * CELL_SIZE
-            
         
-        # On calcule la profondeur du mur le plus proche
-        depth = depth_v if depth_v < depth_h else depth_h
+        x, dx = (x_map + CELL_SIZE, 1) if cos_a >= 0 else (x_map, -1)
+        for _ in range(0, WIDTH, CELL_SIZE):
+            depth_v = (x - ox) / cos_a
+            y = oy + depth_v * sin_a
+            if mapping(x + dx, y) in world_map:
+                texture_offset_y = y % CELL_SIZE
+                break
+            x += dx * CELL_SIZE
         
-        # On corrige la profondeur pour éviter le fish eye effect
-        # Les rayons au centre de l'écran sont plus proches du joueur que ceux sur les côtés
-        # Donc on corrige la profondeur en multipliant par le cosinus de l'angle entre le rayon et le joueur
-        depth *= math.cos(player.angle - curr_angle)
-        # Pour éviter les divisions par 0, on ajoute 1e-6 si la profondeur est égale à 0
-        if depth == 0:
-            depth = 1e-6
-        
-        # On calcule la hauteur du mur
-        # la hauteur projetée est égale à la distance du mur * la taille d'une cellule
-        # proj_height = PROJ_COEFF / depth
-        proj_height = (WALL_HEIGHT / depth) * WALL_HEIGHT
-        
-        # On calcule la couleur du mur
-        # Plus le mur est loin, plus il est sombre
-        c = 255 / (1 + depth * depth * 0.00001)
-        color = (63 + c // 2, 63 + c // 2, 63 +c // 2)
-        
-        # On dessine le mur
-        # le x du mur est le rayon actuel * la largeur d'un rayon
-        # le y du mur est la moitié de la hauteur de l'écran - la moitié de la hauteur du mur
-        # la largeur du mur est la largeur d'un rayon
-        # la hauteur du mur est la hauteur du mur projetée
-        pygame.draw.rect(sc, color, (ray * SCALE, HALF_HEIGHT - proj_height // 2, SCALE, proj_height))
 
-        # On passe au rayon suivant en incrémentant l'angle de DELTA_ANGLE
+        # wall texture
+        depth, offset, texture = (depth_v, texture_offset_y, 'W') if depth_v < depth_h else (depth_h, texture_offset_x, 'W')
+        depth *= math.cos(player.angle - curr_angle)
+        depth = max(depth, 0.00001)
+        proj_height = (WALL_HEIGHT / depth) * WALL_HEIGHT
+        wall_column = textures[texture].subsurface(offset * TEXTURE_SCALE,
+                                        0, TEXTURE_SCALE, TEXTURE_SIZE)
+        wall_column = pygame.transform.scale(wall_column, (SCALE, proj_height))
+        sc.blit(wall_column, (ray * SCALE, HALF_HEIGHT - proj_height // 2))
         curr_angle += DELTA_ANGLE
 
 
