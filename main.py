@@ -14,11 +14,9 @@ HALF_FOV = FOV / 2
 
 CELL_SIZE = 100
 
-NUM_RAYS = WIDTH // 5
+NUM_RAYS = WIDTH // 11
 DELTA_ANGLE = FOV / NUM_RAYS
 
-DIST = NUM_RAYS / (2 * math.tan(HALF_FOV))
-PROJ_COEFF = 3 * DIST * CELL_SIZE
 SCALE = WIDTH // NUM_RAYS
 
 MINI_MAP_SCALE = 4
@@ -33,6 +31,13 @@ MAX_MAP_SIZE_HEIGHT = HEIGHT // CELL_SIZE
 TEXTURE_SIZE = 256
 HALF_TEXTURE_SIZE = TEXTURE_SIZE // 2
 
+MOUSE_BORDER_LEFT = 100
+MOUSE_BORDER_RIGHT = WIDTH - 100
+MOUSE_SENSITIVITY = 0.16
+
+MOUSE_MAX_REL = 40
+
+WALL_HEIGHT = CELL_SIZE * 3 
 
 pygame.init()
 
@@ -46,6 +51,7 @@ textures = {
 }
 
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 
 map = [
@@ -93,6 +99,8 @@ class Player:
         self.x, self.y = WIDTH // 2, HEIGHT // 2
         self.angle = 0
         self.player_speed = 150
+        self.rel = None
+        self.diag_corr = 1 / math.sqrt(2)
         
     @property
     def pos(self):
@@ -101,6 +109,9 @@ class Player:
     @property
     def map_pos(self):
         return int(self.x // CELL_SIZE), int(self.y // CELL_SIZE)
+    
+    def get_rel(self):
+        return self.rel
     
     def movement(self, dt):
         cos_a = math.cos(self.angle)
@@ -130,11 +141,15 @@ class Player:
             if not self.check_collision(new_x, new_y):
                 self.x = new_x
                 self.y = new_y
-        if keys[pygame.K_LEFT]:
-            self.angle -= 1.75 * dt
-        if keys[pygame.K_RIGHT]:
-            self.angle += 1.75 * dt
 
+    def mouse_control(self, dt):
+        mx, my = pygame.mouse.get_pos()
+        if mx < MOUSE_BORDER_LEFT or mx > MOUSE_BORDER_RIGHT:
+            pygame.mouse.set_pos([HALF_WIDTH, HALF_HEIGHT])
+        self.rel = pygame.mouse.get_rel()[0]
+        self.rel = max(-MOUSE_MAX_REL, min(MOUSE_MAX_REL, self.rel))
+        self.angle += self.rel * MOUSE_SENSITIVITY * dt
+    
     def check_collision(self, x, y):
         map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
         if (0 <= map_x < len(map[0])) and (0 <= map_y < len(map)):
@@ -250,7 +265,8 @@ def ray_cast(player: Player):
         
         # On calcule la hauteur du mur
         # la hauteur projetée est égale à la distance du mur * la taille d'une cellule
-        proj_height = PROJ_COEFF / depth
+        # proj_height = PROJ_COEFF / depth
+        proj_height = (WALL_HEIGHT / depth) * WALL_HEIGHT
         
         # On calcule la couleur du mur
         # Plus le mur est loin, plus il est sombre
@@ -280,6 +296,7 @@ while True:
             exit()
     
     player.movement(dt)
+    player.mouse_control(dt)
     sc.fill((0, 0, 0))
 
     # no_ray_cast(player)
@@ -292,15 +309,15 @@ while True:
     text_fps = font.render('FPS : ' + str(int(clock.get_fps())), True, pygame.Color('white'))
     # text_x = font.render('Player X:' + str(int(player.x)), True, pygame.Color('white'))
     # text_y = font.render('Player Y: ' + str(int(player.y)), True, pygame.Color('white'))
-    # map_pos = player.map_pos
-    # text_map_x = font.render('Player Map Pos X: ' + str(map_pos[0]), True, pygame.Color('white'))
-    # text_map_y = font.render('Player Map Pos Y: ' + str(map_pos[1]), True, pygame.Color('white'))
-    # text_angle = font.render('Player Angle : ' + str(int(math.degrees(player.angle) % 360)), True, pygame.Color('white'))
+    map_pos = player.map_pos
+    text_map_x = font.render('Player Map Pos X: ' + str(map_pos[0]), True, pygame.Color('white'))
+    text_map_y = font.render('Player Map Pos Y: ' + str(map_pos[1]), True, pygame.Color('white'))
+    text_angle = font.render('Player Angle : ' + str(int(math.degrees(player.angle) % 360)), True, pygame.Color('white'))
+    text_player_rel_x = font.render('Player Rel X : ' + str(player.get_rel()), True, pygame.Color('white'))
+    sc.blit(text_player_rel_x, (50, 350))
     sc.blit(text_fps, (50, 50))
-    # sc.blit(text_x, (50, 100))
-    # sc.blit(text_y, (50, 150))
-    # sc.blit(text_angle, (50, 200))
-    # sc.blit(text_map_x, (50, 250))
-    # sc.blit(text_map_y, (50, 300))
+    sc.blit(text_angle, (50, 200))
+    sc.blit(text_map_x, (50, 250))
+    sc.blit(text_map_y, (50, 300))
     
     pygame.display.flip()
