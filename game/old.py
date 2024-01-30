@@ -4,41 +4,8 @@ import time
 import numpy as np
 import random
 
-WIDTH = 1920
-HALF_WIDTH = WIDTH // 2
-HEIGHT = 1080
-HALF_HEIGHT = HEIGHT // 2
-
-FOV = math.pi / 3
-HALF_FOV = FOV / 2
-
-CELL_SIZE = 100
-
-NUM_RAYS = WIDTH // 11
-DELTA_ANGLE = FOV / NUM_RAYS
-
-SCALE = WIDTH // NUM_RAYS
-
-MINI_MAP_SCALE = 4
-MINI_MAP_TILE = CELL_SIZE // MINI_MAP_SCALE
-MINI_MAP_POS = (0, HEIGHT - HEIGHT // MINI_MAP_SCALE)
-
-MAX_FPS = 144
-
-MAX_MAP_SIZE_WIDTH = WIDTH // CELL_SIZE
-MAX_MAP_SIZE_HEIGHT = HEIGHT // CELL_SIZE
-
-TEXTURE_SIZE = 256
-HALF_TEXTURE_SIZE = TEXTURE_SIZE // 2
-TEXTURE_SCALE = TEXTURE_SIZE // CELL_SIZE
-
-MOUSE_BORDER_LEFT = 100
-MOUSE_BORDER_RIGHT = WIDTH - 100
-MOUSE_SENSITIVITY = 0.16
-
-MOUSE_MAX_REL = 40
-
-WALL_HEIGHT = CELL_SIZE * 3 
+from settings import *
+from map import *
 
 pygame.init()
 
@@ -56,35 +23,35 @@ sc = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 
-map = [
-    ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-    ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
-    ['W', '.', '.', 'W', 'W', 'W', '.', '.', '.', 'W', '.', 'W'],
-    ['W', 'W', '.', '.', 'W', '.', '.', '.', '.', '.', '.', 'W'],
-    ['W', '.', '.', '.', '.', '.', '.', 'W', '.', '.', '.', 'W'],
-    ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
-    ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W']
-]
+# map = [
+#     ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+#     ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
+#     ['W', '.', '.', 'W', 'W', 'W', '.', '.', '.', 'W', '.', 'W'],
+#     ['W', 'W', '.', '.', 'W', '.', '.', '.', '.', '.', '.', 'W'],
+#     ['W', '.', '.', '.', '.', '.', '.', 'W', '.', '.', '.', 'W'],
+#     ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
+#     ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W']
+# ]
 
-# def generate_basic_map(width, height, cell_size):
-#     max_map_width = width // cell_size
-#     max_map_height = height // cell_size
+def generate_basic_map(width, height, cell_size):
+    max_map_width = width // cell_size
+    max_map_height = height // cell_size
     
-#     map = []
-#     for y in range(max_map_height):
-#         row = []
-#         for x in range(max_map_width):
-#             if x == 0 or x == max_map_width - 1 or y == 0 or y == max_map_height - 1:
-#                 row.append('W')
-#             else:
-#                 if random.random() < 0.2:  # Adjust the probability as needed
-#                     row.append('W')
-#                 else:
-#                     row.append('.')
-#         map.append(row)
-#     return map
+    map = []
+    for y in range(max_map_height):
+        row = []
+        for x in range(max_map_width):
+            if x == 0 or x == max_map_width - 1 or y == 0 or y == max_map_height - 1:
+                row.append('W')
+            else:
+                if random.random() < 0.2:  # Adjust the probability as needed
+                    row.append('W')
+                else:
+                    row.append('.')
+        map.append(row)
+    return map
 
-# map = generate_basic_map(WIDTH, HEIGHT, CELL_SIZE)
+map = generate_basic_map(WIDTH, HEIGHT, CELL_SIZE)
 
 MAX_DEPTH = 20
 
@@ -152,6 +119,7 @@ class Player:
         self.rel = max(-MOUSE_MAX_REL, min(MOUSE_MAX_REL, self.rel))
         self.angle += self.rel * MOUSE_SENSITIVITY * dt
     
+    # TODO: Fix the collision, i can pass through diagonal walls
     def check_collision(self, x, y):
         map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
         if (0 <= map_x < len(map[0])) and (0 <= map_y < len(map)):
@@ -172,7 +140,7 @@ def display_mini_map():
     def mini_mapping(a, b):
         return (a // MINI_MAP_TILE) * MINI_MAP_TILE, (b // MINI_MAP_TILE) * MINI_MAP_TILE
     
-     # Create a surface for the mini map
+    # Create a surface for the mini map
     mini_map_surface = pygame.Surface((WIDTH // MINI_MAP_SCALE, WIDTH // MINI_MAP_SCALE))
     
     # set the alpha
@@ -204,9 +172,6 @@ def ray_cast(player: Player):
 
     sc.blit(sky_texture, (-sky_offset, 0))
     sc.blit(sky_texture, (-sky_offset + WIDTH, 0))
-        
-    
-
     
     # On récupère la position du joueur
     ox, oy = player.pos
@@ -265,7 +230,7 @@ while True:
     
     player.movement(dt)
     player.mouse_control(dt)
-    sc.fill((0, 0, 0))
+    # sc.fill((0, 0, 0))
 
     # no_ray_cast(player)
     ray_cast(player)
@@ -277,15 +242,15 @@ while True:
     text_fps = font.render('FPS : ' + str(int(clock.get_fps())), True, pygame.Color('white'))
     # text_x = font.render('Player X:' + str(int(player.x)), True, pygame.Color('white'))
     # text_y = font.render('Player Y: ' + str(int(player.y)), True, pygame.Color('white'))
-    map_pos = player.map_pos
-    text_map_x = font.render('Player Map Pos X: ' + str(map_pos[0]), True, pygame.Color('white'))
-    text_map_y = font.render('Player Map Pos Y: ' + str(map_pos[1]), True, pygame.Color('white'))
-    text_angle = font.render('Player Angle : ' + str(int(math.degrees(player.angle) % 360)), True, pygame.Color('white'))
-    text_player_rel_x = font.render('Player Rel X : ' + str(player.get_rel()), True, pygame.Color('white'))
-    sc.blit(text_player_rel_x, (50, 350))
+    # map_pos = player.map_pos
+    # text_map_x = font.render('Player Map Pos X: ' + str(map_pos[0]), True, pygame.Color('white'))
+    # text_map_y = font.render('Player Map Pos Y: ' + str(map_pos[1]), True, pygame.Color('white'))
+    # text_angle = font.render('Player Angle : ' + str(int(math.degrees(player.angle) % 360)), True, pygame.Color('white'))
+    # text_player_rel_x = font.render('Player Rel X : ' + str(player.get_rel()), True, pygame.Color('white'))
+    # sc.blit(text_player_rel_x, (50, 350))
     sc.blit(text_fps, (50, 50))
-    sc.blit(text_angle, (50, 200))
-    sc.blit(text_map_x, (50, 250))
-    sc.blit(text_map_y, (50, 300))
+    # sc.blit(text_angle, (50, 200))
+    # sc.blit(text_map_x, (50, 250))
+    # sc.blit(text_map_y, (50, 300))
     
     pygame.display.flip()
