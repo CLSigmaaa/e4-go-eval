@@ -2,6 +2,7 @@ from settings import *
 from map import *
 from player import *
 from raycasting import *
+from debug import *
 import pygame
 import math
 import time
@@ -23,6 +24,7 @@ class Game:
         self.map.generate_world_map()
         self.player.set_map(self.map.map)
         self.raycasting = Raycasting(self)
+        self.debug = Debug(self)
     
     
     def check_events(self):
@@ -35,8 +37,8 @@ class Game:
         self.player.update(dt)
         self.raycasting.draw()
         self.map.draw()
+        self.debug.draw()
         pygame.display.flip()
-        pygame.display.set_caption(f'{self.clock.get_fps() :.1f}')
     
     def run(self):
         while True:
