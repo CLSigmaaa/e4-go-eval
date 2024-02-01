@@ -19,7 +19,7 @@ class Map:
                 if x == 0 or x == self.max_map_width - 1 or y == 0 or y == self.max_map_height - 1:
                     row.append('W')
                 else:
-                    if random.random() < 0.3:  # Adjust the probability as needed
+                    if random.random() < 0.15:  # Adjust the probability as needed
                         row.append('W')
                     else:
                         row.append('.')
@@ -35,7 +35,7 @@ class Map:
     
     def draw(self):
         # Create a surface for the mini map
-        mini_map_surface = pygame.Surface((WIDTH // MINI_MAP_SCALE, WIDTH // MINI_MAP_SCALE))
+        mini_map_surface = pygame.Surface((WIDTH // MINI_MAP_SCALE, (HEIGHT // MINI_MAP_SCALE)))
         
         # set the alpha
         mini_map_surface.set_alpha(300)
