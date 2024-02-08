@@ -14,11 +14,44 @@ class Raycasting:
         self.sky_offset = 0
         self.sky_texture = pygame.image.load('./ressources/textures/sky.png')
         self.sky_texture = pygame.transform.scale(self.sky_texture, (WIDTH, HEIGHT // 2))
+        self.objects_to_render = []
+        self.ray_casting_results = []
     
     def mapping(self, a, b):
         return (a // CELL_SIZE) * CELL_SIZE, (b // CELL_SIZE) * CELL_SIZE
     
+    def get_objects_to_render(self):
+        self.objects_to_render = []
+        for ray, values in enumerate(self.ray_casting_results):
+            depth, proj_height, texture, offset = values
+
+            
+            wall_column = self.textures[texture].subsurface(offset * TEXTURE_SCALE,
+                                            0, TEXTURE_SCALE, TEXTURE_SIZE)
+            wall_column = pygame.transform.scale(wall_column, (SCALE, proj_height))
+            # self.screen.blit(wall_column, (ray * SCALE, HALF_HEIGHT - proj_height // 2))
+            wall_pos = (ray * SCALE, HALF_HEIGHT - proj_height // 2, SCALE, proj_height)
+            
+            # if proj_height < HEIGHT:
+            #     wall_column = self.textures[texture].subsurface(
+            #         offset * (TEXTURE_SIZE - SCALE), 0, SCALE, TEXTURE_SIZE
+            #     )
+            #     wall_column = pygame.transform.scale(wall_column, (SCALE, proj_height))
+            #     wall_pos = (ray * SCALE, HALF_HEIGHT - proj_height // 2)
+            # else:
+            #     texture_height = TEXTURE_SIZE * HEIGHT / proj_height
+            #     wall_column = self.textures[texture].subsurface(
+            #         offset * (TEXTURE_SIZE - SCALE), HALF_TEXTURE_SIZE - texture_height // 2,
+            #         SCALE, texture_height
+            #     )
+            #     wall_column = pygame.transform.scale(wall_column, (SCALE, HEIGHT))
+            #     wall_pos = (ray * SCALE, 0)
+
+            self.objects_to_render.append((depth, wall_column, wall_pos))
+            # print(self.objects_to_render)
+    
     def wall_casting(self):
+        self.ray_casting_results = []
         ox, oy = self.player.pos
         # On récupère la cellule dans laquelle se trouve le joueur
         x_map, y_map = (ox // CELL_SIZE) * CELL_SIZE, (oy // CELL_SIZE) * CELL_SIZE
@@ -54,13 +87,20 @@ class Raycasting:
 
             # wall texture
             depth, offset, texture = (depth_v, texture_offset_y, 'W') if depth_v < depth_h else (depth_h, texture_offset_x, 'W')
-            depth *= math.cos(self.player.angle - curr_angle)
             depth = max(depth, 0.00001)
+            depth *= math.cos(self.player.angle - curr_angle)
             proj_height = (WALL_HEIGHT / depth) * WALL_HEIGHT
-            wall_column = self.textures[texture].subsurface(offset * TEXTURE_SCALE,
-                                            0, TEXTURE_SCALE, TEXTURE_SIZE)
-            wall_column = pygame.transform.scale(wall_column, (SCALE, proj_height))
-            self.screen.blit(wall_column, (ray * SCALE, HALF_HEIGHT - proj_height // 2))
+            
+            
+            self.ray_casting_results.append((depth, proj_height, texture, offset))
+            
+            # wall_column = self.textures[texture].subsurface(offset * TEXTURE_SCALE,
+            #                                 0, TEXTURE_SCALE, TEXTURE_SIZE)
+            # wall_column = pygame.transform.scale(wall_column, (SCALE, proj_height))
+            # self.screen.blit(wall_column, (ray * SCALE, HALF_HEIGHT - proj_height // 2))
+            # pos = (ray * SCALE, HALF_HEIGHT - proj_height // 2, SCALE, proj_height)
+            # self.objects_to_render.append((depth, proj_height, texture, offset, ray))
+            
             curr_angle += DELTA_ANGLE
     
     def floor_casting(self):
@@ -75,3 +115,4 @@ class Raycasting:
         self.sky_casting()
         self.floor_casting()
         self.wall_casting()
+        self.get_objects_to_render()
