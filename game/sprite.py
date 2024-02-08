@@ -3,10 +3,6 @@ import pygame
 
 class Sprite:
     def __init__(self, game, path, pos) -> None:
-        self.game = game
-        self.screen = game.screen
-        self.game.map = game.map
-        self.world_map = game.map.world_map
         self.player = game.player
         self.raycasting = game.raycasting
         self.x, self.y = pos
@@ -30,14 +26,8 @@ class Sprite:
         dx, dy = self.x - self.player.x, self.y - self.player.y
         theta = math.atan2(dy, dx)
         
-        # show the value of theta
-        # self.screen.blit(pygame.font.SysFont('Arial', 20).render(f'{theta}', True, (255, 255, 255)), (WIDTH - 100, 0))
-        
-        
         delta = theta - self.player.angle
-        
-        # self.screen.blit(pygame.font.SysFont('Arial', 20).render(f'{delta}', True, (255, 255, 255)), (WIDTH - 100, 20))
-        
+                
         if delta < -math.pi:
             delta += math.tau
         elif delta > math.pi:

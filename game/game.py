@@ -5,6 +5,7 @@ from raycasting import *
 from debug import *
 from sprite import *
 from object_renderer import *
+from object_handler import *
 import pygame
 import math
 import time
@@ -26,7 +27,7 @@ class Game:
         self.map.generate_world_map()
         self.player.set_map(self.map.map)
         self.raycasting = Raycasting(self)
-        self.sprite = Sprite(self, './ressources/sprites/static/candlebra.png', (WIDTH // 3, HALF_HEIGHT))
+        self.object_handler = ObjectHandler(self)
         self.object_renderer = ObjectRenderer(self)
         self.debug = Debug(self)
     
@@ -40,7 +41,7 @@ class Game:
     def update(self, dt):
         self.player.update(dt)
         self.raycasting.draw()
-        self.sprite.update()
+        self.object_handler.update()
         self.object_renderer.render_game_objects()
         self.map.draw()
         self.debug.draw()
