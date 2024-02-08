@@ -1,4 +1,4 @@
-from sprite import Sprite
+from sprite import *
 from settings import *
 
 class ObjectHandler:
@@ -6,7 +6,8 @@ class ObjectHandler:
         self.game = game
         self.objects = []
         self.sprites = []
-        self.add_sprite(Sprite(self.game, './ressources/sprites/static/candlebra.png', (WIDTH // 3, HALF_HEIGHT)))
+        self.add_sprite(Sprite(self.game, (WIDTH // 3, HALF_HEIGHT)))
+        self.add_sprite(AnimatedSprite(self.game, (WIDTH // 4, HALF_HEIGHT), './ressources/sprites/animated/red_light/0.png'))
         
     def add_sprite(self, sprite):
         self.sprites.append(sprite)
