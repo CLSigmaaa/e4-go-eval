@@ -2,7 +2,7 @@ from settings import *
 import pygame
 
 class Sprite:
-    def __init__(self, game, path, pos) -> None:
+    def __init__(self, game, path, pos, height_shift=30) -> None:
         self.player = game.player
         self.raycasting = game.raycasting
         self.x, self.y = pos
@@ -10,6 +10,7 @@ class Sprite:
         self.sprite = pygame.image.load(self.path)
         self.sprite_width, self.sprite_height = self.sprite.get_size()
         self.ratio = self.sprite_width / self.sprite_height
+        self.height_shift = height_shift
     
     
     def get_sprite_projection(self, distance_to_player, screen_x):
@@ -18,7 +19,7 @@ class Sprite:
         sprite_width = sprite_height * self.ratio
         sprite = pygame.transform.scale(self.sprite, (int(sprite_width), int(sprite_height)))
         sprite_x = screen_x - sprite_width // 2
-        sprite_y = HALF_HEIGHT - sprite_height // 2
+        sprite_y = HALF_HEIGHT - sprite_height // 2 + self.height_shift
         
         self.raycasting.objects_to_render.append((distance_to_player, sprite, (sprite_x, sprite_y)))
     
