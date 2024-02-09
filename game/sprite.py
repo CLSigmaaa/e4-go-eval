@@ -28,7 +28,7 @@ class Sprite:
         sprite_x = self.screen_x - sprite_width // 2
         # sprite_y = HALF_HEIGHT - sprite_height // 2 + self.height_shift
         sprite_y = HALF_HEIGHT - sprite_height // 2
-        
+        print("")
         self.raycasting.objects_to_render.append((self.distance_to_player, sprite, (sprite_x, sprite_y)))
     
     def get_sprite(self):
