@@ -32,20 +32,20 @@ stages:
   - stage: deploy
     displayName: 'Deploy to dev env'
     jobs:
-    - job: 
-      displayName: test
-      steps:
-        - script: echo 'hello world'
-    - deployment: DeployAPIs
-      displayName: Deploy a docker image to SIGMA computer
-      environment:
-        name: ValentinEnvironment
-        resourceName: SIGMA
-        resourceType: virtualMachine
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - script: |
-                docker stop $(docker ps -a -q)
-                docker run  -p 3000:3000 --name api_websocket_raycasting$(Build.BuildId) -d shinratsu/raycasting:latest 
+      - job: 
+        displayName: test
+        steps:
+          - script: echo 'hello world'
+      - deployment: DeployAPIs
+        displayName: Deploy a docker image to SIGMA computer
+        environment:
+          name: ValentinEnvironment
+          resourceName: SIGMA
+          resourceType: virtualMachine
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - script: |
+                  docker stop $(docker ps -a -q)
+                  docker run  -p 3000:3000 --name api_websocket_raycasting$(Build.BuildId) -d shinratsu/raycasting:latest 
