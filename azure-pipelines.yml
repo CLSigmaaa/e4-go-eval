@@ -19,7 +19,8 @@ stages:
         steps:
           - task: Docker@2
             inputs:
-              containerRegistry: "DockerHubVal"
-              repository: "shinratsu/raycasting"
-              command: "buildAndPush"
-              Dockerfile: "./api/Dockerfile"
+              containerRegistry: 'DockerHubVal'
+              repository: 'shinratsu/raycasting'
+              command: 'buildAndPush'
+              Dockerfile: './api/Dockerfile'
+              tags: 'latest'
