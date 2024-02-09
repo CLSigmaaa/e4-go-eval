@@ -91,16 +91,7 @@ class Raycasting:
             depth *= math.cos(self.player.angle - curr_angle)
             proj_height = (WALL_HEIGHT / depth) * WALL_HEIGHT
             
-            
             self.ray_casting_results.append((depth, proj_height, texture, offset))
-            
-            # wall_column = self.textures[texture].subsurface(offset * TEXTURE_SCALE,
-            #                                 0, TEXTURE_SCALE, TEXTURE_SIZE)
-            # wall_column = pygame.transform.scale(wall_column, (SCALE, proj_height))
-            # self.screen.blit(wall_column, (ray * SCALE, HALF_HEIGHT - proj_height // 2))
-            # pos = (ray * SCALE, HALF_HEIGHT - proj_height // 2, SCALE, proj_height)
-            # self.objects_to_render.append((depth, proj_height, texture, offset, ray))
-            
             curr_angle += DELTA_ANGLE
     
     def floor_casting(self):

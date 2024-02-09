@@ -6,6 +6,7 @@ from debug import *
 from sprite import *
 from object_renderer import *
 from object_handler import *
+from weapon import *
 import pygame
 import math
 import time
@@ -27,10 +28,10 @@ class Game:
         self.map.generate_world_map()
         self.player.set_map(self.map.map)
         self.raycasting = Raycasting(self)
+        self.weapon = Weapon(self)
         self.object_handler = ObjectHandler(self)
         self.object_renderer = ObjectRenderer(self)
         self.debug = Debug(self)
-    
     
     def check_events(self):
         for event in pygame.event.get():
@@ -43,6 +44,7 @@ class Game:
         self.raycasting.draw()
         self.object_handler.update()
         self.object_renderer.render_game_objects()
+        self.weapon.draw_weapon()
         self.map.draw()
         self.debug.draw()
         pygame.display.flip()

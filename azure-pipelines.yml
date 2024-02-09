@@ -8,17 +8,16 @@ trigger:
 
 pool: Default
 
-steps:
-  - script: echo Initialize pipeline
-    displayName: "Initialize"
-
-  - task: GoTool@0
-    inputs:
-      version: "1.21.6"
-    displayName: "Install Go"
-
-  - script: go build -v ./api
-    displayName: "Build API"
-
-  - script: echo Pipeline completed
-    displayName: "Complete"
+stages:
+  - stage: Build
+    displayName: BuildAndPush
+    jobs:
+      - job: Build
+        displayName: Build
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: "DockerHubVal"
+              repository: "shinratsu/raycasting"
+              command: "buildAndPush"
+              Dockerfile: "./api/Dockerfile"
