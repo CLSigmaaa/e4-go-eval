@@ -11,11 +11,11 @@ pool:
   vmImage: valentin
 
 stages:
-  - stage: build
+  - stage: docker_push
     displayName: BuildAndPush
     jobs:
       - job:
-        displayName: Build
+        displayName: BuildDockerAndPush
         steps:
           - task: Docker@2
             inputs:
@@ -28,7 +28,7 @@ stages:
                 $(Build.BuildId)
   - stage: deploy
     displayName: 'Deploy to dev env'
-    dependsOn: build
+    dependsOn: docker_push
     jobs:
     - job: 
       displayName: test
