@@ -11,10 +11,10 @@ pool:
   vmImage: valentin
 
 stages:
-  - stage: Build
+  - stage: build
     displayName: BuildAndPush
     jobs:
-      - job: Build
+      - job:
         displayName: Build
         steps:
           - task: Docker@2
@@ -26,9 +26,9 @@ stages:
               tags: |
                 latest
                 $(Build.BuildId)
-  - stage:
+  - stage: deploy
     displayName: 'Deploy to dev env'
-    dependsOn: Build
+    dependsOn: build
     jobs:        
     - deployment: DeployAPIs
       displayName: Deploy a docker image to SIGMA computer
@@ -43,4 +43,3 @@ stages:
             - script: |
                 docker stop $(docker ps -a -q)
                 docker run  -p 3000:3000 --name api_websocket_raycasting$(Build.BuildId) -d shinratsu/raycasting:latest 
-
