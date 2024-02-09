@@ -26,6 +26,10 @@ stages:
               tags: |
                 latest
                 $(Build.BuildId)
+      - job:
+        displayName: test
+        steps:
+          - script: echo 'hello world'
   - stage: deploy
     displayName: 'Deploy to dev env'
     dependsOn: build
