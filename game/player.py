@@ -60,13 +60,36 @@ class Player:
         self.angle += (self.rel * MOUSE_SENSITIVITY * dt) 
         self.angle = self.angle % (math.tau)
     
-    # TODO: Fix the collision, i can pass through diagonal walls
-    def check_collision(self, x, y):
+    def check_collision(self, x, y): # Taille du joueur
         map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
         if (0 <= map_x < len(self.game.map.map[0])) and (0 <= map_y < len(self.game.map.map[1])):
             if self.map[map_y][map_x] == 'W':
                 return True
+        # Vérifier la collision pour x + PLAYER_SIZE
+        map_x = int((x + PLAYER_SIZE) // CELL_SIZE)
+        if (0 <= map_x < len(self.game.map.map[0])) and (0 <= map_y < len(self.game.map.map[1])):
+            if self.map[map_y][map_x] == 'W':
+                return True
+        # Vérifier la collision pour y + PLAYER_SIZE
+        map_y = int((y + PLAYER_SIZE) // CELL_SIZE)
+        if (0 <= map_x < len(self.game.map.map[0])) and (0 <= map_y < len(self.game.map.map[1])):
+            if self.map[map_y][map_x] == 'W':
+                return True
+
+        # Vérifier la collision pour x - PLAYER_SIZE
+        map_x = int((x - PLAYER_SIZE) // CELL_SIZE)
+        if (0 <= map_x < len(self.game.map.map[0])) and (0 <= map_y < len(self.game.map.map[1])):
+            if self.map[map_y][map_x] == 'W':
+                return True
+        
+        # Vérifier la collision pour y - PLAYER_SIZE
+        map_y = int((y - PLAYER_SIZE) // CELL_SIZE)
+        if (0 <= map_x < len(self.game.map.map[0])) and (0 <= map_y < len(self.game.map.map[1])):
+            if self.map[map_y][map_x] == 'W':
+                return True
         return False
+    
+    
     
     # setter
     def set_map(self, map):
