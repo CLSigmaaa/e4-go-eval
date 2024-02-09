@@ -37,9 +37,9 @@ class Sprite:
         
         delta = theta - self.player.angle
         
-        if delta < -math.pi:
+        if delta <= -math.pi:
             delta += math.tau
-        elif delta > math.pi:
+        elif delta >= math.pi:
             delta -= math.tau
         
         delta_rays = delta / DELTA_ANGLE

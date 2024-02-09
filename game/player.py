@@ -57,7 +57,8 @@ class Player:
             pygame.mouse.set_pos([HALF_WIDTH, HALF_HEIGHT])
         self.rel = pygame.mouse.get_rel()[0]
         self.rel = max(-MOUSE_MAX_REL, min(MOUSE_MAX_REL, self.rel))
-        self.angle += self.rel * MOUSE_SENSITIVITY * dt
+        self.angle += (self.rel * MOUSE_SENSITIVITY * dt) 
+        self.angle = self.angle % (math.tau)
     
     # TODO: Fix the collision, i can pass through diagonal walls
     def check_collision(self, x, y):
