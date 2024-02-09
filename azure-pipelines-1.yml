@@ -6,9 +6,12 @@
 trigger:
   - main
 
-pool:
-  name: Default
-  vmImage: valentin
+# pool:
+#   name: Default
+#   vmImage: valentin
+
+
+pool: Default
 
 stages:
   - stage: docker_push
