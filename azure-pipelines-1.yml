@@ -6,12 +6,12 @@
 trigger:
   - main
 
-# pool:
-#   name: Default
-#   vmImage: valentin
+pool:
+  name: Default
+  vmImage: valentin
 
 
-pool: Default
+# pool: Default
 
 stages:
   - stage: docker_push
@@ -32,12 +32,8 @@ stages:
   - stage: deploy
     displayName: 'Deploy to dev env'
     jobs:
-      - job: 
-        displayName: test
-        steps:
-          - script: echo 'hello world'
       - deployment: DeployAPIs
-        displayName: Deploy a docker image to SIGMA computer
+        displayName: 'Deploy a docker image to SIGMA computer'
         environment:
           name: ValentinEnvironment
           resourceName: SIGMA
