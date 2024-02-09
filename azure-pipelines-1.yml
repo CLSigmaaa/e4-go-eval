@@ -28,7 +28,6 @@ stages:
                 $(Build.BuildId)
   - stage: deploy
     displayName: 'Deploy to dev env'
-    dependsOn: docker_push
     jobs:
     - job: 
       displayName: test
