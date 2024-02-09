@@ -4,7 +4,7 @@ from collections import deque
 import os
 
 class Sprite:
-    def __init__(self, game, pos, path='./ressources/sprites/static/candlebra.png', height_shift=30) -> None:
+    def __init__(self, game, pos, path='./ressources/sprites/static/candlebra.png', height_shift=0.27) -> None:
         self.player = game.player
         self.raycasting = game.raycasting
         self.x, self.y = pos
@@ -27,8 +27,8 @@ class Sprite:
         sprite = pygame.transform.scale(self.sprite, (int(sprite_width), int(sprite_height)))
         sprite_x = self.screen_x - sprite_width // 2
         # sprite_y = HALF_HEIGHT - sprite_height // 2 + self.height_shift
-        sprite_y = HALF_HEIGHT - sprite_height // 2
-        print("")
+        height_shift = proj_height * self.height_shift
+        sprite_y = HALF_HEIGHT - sprite_height // 2 + height_shift
         self.raycasting.objects_to_render.append((self.distance_to_player, sprite, (sprite_x, sprite_y)))
     
     def get_sprite(self):

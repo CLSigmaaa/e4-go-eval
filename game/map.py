@@ -19,7 +19,7 @@ class Map:
                 if x == 0 or x == self.max_map_width - 1 or y == 0 or y == self.max_map_height - 1:
                     row.append('W')
                 else:
-                    if random.random() < 0.15:  # Adjust the probability as needed
+                    if random.random() < 0.05:  # Adjust the probability as needed
                         row.append('W')
                     else:
                         row.append('.')
