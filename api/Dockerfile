@@ -1,23 +1,17 @@
-# Use the official Golang image as the base image
-FROM golang:1.21.6-alpine
+# Utilisation de l'image officielle de Go 1.16.6 comme image de base
+FROM golang:1.21.6
 
-# Set the working directory inside the container
+# Définir le répertoire de travail à l'intérieur du conteneur
 WORKDIR /app
 
-# Copy the Go module files
-COPY go.mod go.sum ./
-
-# Download and install the Go dependencies
-RUN go mod download
-
-# Copy the rest of the application source code
+# Copier le contenu de votre application Go dans le conteneur
 COPY . .
 
-# Build the Go application
+# Compiler l'application
 RUN go build -o main .
 
-# Expose the port that the API will listen on
+# Exposer le port sur lequel votre application écoute
 EXPOSE 3000
 
-# Set the command to run the executable
+# Commande à exécuter lors du démarrage du conteneur
 CMD ["./main"]
