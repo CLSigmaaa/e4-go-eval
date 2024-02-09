@@ -23,4 +23,6 @@ stages:
               repository: 'shinratsu/raycasting'
               command: 'buildAndPush'
               Dockerfile: './api/Dockerfile'
-              tags: 'latest'
+              tags: |
+                latest
+                $(Build.Build.Id)
