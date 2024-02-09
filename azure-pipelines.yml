@@ -26,3 +26,16 @@ stages:
               tags: |
                 latest
                 $(Build.Build.Id)
+  - stage:
+    displayName: 'Deploy to dev env'
+    dependsOn: Build
+    jobs:        
+    - deployment: DeployAPIs
+      displayName: Deploy a docker image to on premise server
+      environment: ValentinEnvironment
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - script: |
+                docker run  -p 3000:3000 --name api_websocket_raycasting$(Build.BuildId) -d shinratsu/raycasting:latest
