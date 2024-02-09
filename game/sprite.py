@@ -48,6 +48,7 @@ class Sprite:
         
         if -self.half_sprite_width < self.screen_x < WIDTH + self.half_sprite_width:
             self.get_sprite_projection()
+        print("")
     
     def update(self):
         self.get_sprite()
