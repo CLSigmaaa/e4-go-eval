@@ -6,7 +6,9 @@
 trigger:
   - master
 
-pool: Default
+pool:
+  name: Default
+  vmImage: valentin
 
 stages:
   - stage: Build
