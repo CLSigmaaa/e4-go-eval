@@ -16,3 +16,7 @@ class ObjectRenderer:
         # print(list_objects)
         for depth, image, pos in list_objects:
             self.screen.blit(image, pos)
+    
+    def draw_crosshair(self):
+        pygame.draw.line(self.screen, (0, 255, 0), (HALF_WIDTH - 15, HALF_HEIGHT), (HALF_WIDTH + 15, HALF_HEIGHT))
+        pygame.draw.line(self.screen, (0, 255, 0), (HALF_WIDTH, HALF_HEIGHT - 15), (HALF_WIDTH, HALF_HEIGHT + 15) )

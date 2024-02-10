@@ -45,6 +45,7 @@ class Game:
         self.raycasting.draw()
         self.object_handler.update()
         self.object_renderer.render_game_objects()
+        self.object_renderer.draw_crosshair()
         self.weapon.draw()
         self.weapon.update()
         self.map.draw()
