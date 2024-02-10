@@ -24,23 +24,16 @@ class Sprite:
     def get_sprite_projection(self):
         self.distance_to_player = max(self.distance_to_player, 1e-6)
         proj_height = (WALL_HEIGHT / self.distance_to_player) * WALL_HEIGHT
-        sprite_height = proj_height
-        sprite_width = sprite_height* self.ratio
-        
-        font = pygame.font.SysFont('Arial', 20, bold=True)
-        text_sprite_height = font.render('sprite_height : ' + str(sprite_height), True, pygame.Color('white'))
-        self.game.screen.blit(text_sprite_height, (10, 120))
-        
-        text_sprite_width = font.render('sprite_width : ' + str(sprite_width), True, pygame.Color('white'))
-        self.game.screen.blit(text_sprite_width, (10, 140))
-        
-        
-        
-        sprite = pygame.transform.scale(self.sprite, (int(sprite_width), int(sprite_height)))
-        sprite_x = self.screen_x - sprite_width // 2
-        height_shift = sprite_height * self.height_shift
-        sprite_y = HALF_HEIGHT - sprite_height // 2 + height_shift
-        self.raycasting.objects_to_render.append((self.distance_to_player, sprite, (sprite_x, sprite_y)))
+
+        if not proj_height > WIDTH:
+            sprite_height = proj_height
+            sprite_width = sprite_height* self.ratio
+
+            sprite = pygame.transform.scale(self.sprite, (int(sprite_width), int(sprite_height)))
+
+            sprite_pos = (self.screen_x - sprite_width // 2, HALF_HEIGHT - sprite_height // 2)
+
+            self.raycasting.objects_to_render.append((self.distance_to_player, sprite, sprite_pos))
     
     def get_sprite(self):
         dx, dy = self.x - self.player.x, self.y - self.player.y
