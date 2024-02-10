@@ -38,13 +38,15 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            self.player.check_fire_weapon(event)
     
     def update(self, dt):
         self.player.update(dt)
         self.raycasting.draw()
         self.object_handler.update()
         self.object_renderer.render_game_objects()
-        self.weapon.draw_weapon()
+        self.weapon.draw()
+        self.weapon.update()
         self.map.draw()
         self.debug.draw()
         pygame.display.flip()

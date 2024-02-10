@@ -10,6 +10,7 @@ class Player:
         self.angle = 0
         self.player_speed = 150
         self.rel = None
+        self.shot = False
         
     @property
     def pos(self):
@@ -89,7 +90,11 @@ class Player:
                 return True
         return False
     
-    
+    def check_fire_weapon(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1 and not self.shot and not self.game.weapon.reloading:
+                self.shot = True
+                self.game.weapon.reloading = True
     
     # setter
     def set_map(self, map):

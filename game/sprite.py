@@ -31,7 +31,11 @@ class Sprite:
 
             sprite = pygame.transform.scale(self.sprite, (int(sprite_width), int(sprite_height)))
 
-            sprite_pos = (self.screen_x - sprite_width // 2, HALF_HEIGHT - sprite_height // 2)
+            sprite_x = self.screen_x - sprite_width // 2
+            height_shift = proj_height * self.height_shift
+            sprite_y = HALF_HEIGHT - sprite_height // 2 + height_shift
+            
+            sprite_pos = (sprite_x, sprite_y)
 
             self.raycasting.objects_to_render.append((self.distance_to_player, sprite, sprite_pos))
     
@@ -39,16 +43,9 @@ class Sprite:
         dx, dy = self.x - self.player.x, self.y - self.player.y
         theta = math.atan2(dy, dx)
         
-        # display theta on the screen
-        font = pygame.font.SysFont('Arial', 20, bold=True)
-        text_theta = font.render('theta : ' + str(theta), True, pygame.Color('white'))
-        self.game.screen.blit(text_theta, (10, 40))
         
         
         delta = (theta - self.player.angle)
-        
-        text_delta = font.render('delta : ' + str(delta), True, pygame.Color('white'))
-        self.game.screen.blit(text_delta, (10, 60))
         
         # TODO: Fix the sky clipping when delta angle is out of range
         if delta < -math.pi:
@@ -58,13 +55,8 @@ class Sprite:
         
         delta_rays = delta / DELTA_ANGLE
         
-        text_delta_rays = font.render('delta_rays : ' + str(delta_rays), True, pygame.Color('white'))
-        self.game.screen.blit(text_delta_rays, (10, 80))
-        
         self.screen_x = (HALF_NUM_RAYS + delta_rays) * SCALE
         
-        text_screen_x = font.render('screen_x : ' + str(self.screen_x), True, pygame.Color('white'))
-        self.game.screen.blit(text_screen_x, (10, 100))
         
         self.distance_to_player = math.hypot(dx, dy)
         
