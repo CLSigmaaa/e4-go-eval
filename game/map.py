@@ -13,17 +13,32 @@ class Map:
         self.max_map_height = HEIGHT // CELL_SIZE
         
     def generate_basic_map(self):
-        for y in range(self.max_map_height):
-            row = []
-            for x in range(self.max_map_width):
-                if x == 0 or x == self.max_map_width - 1 or y == 0 or y == self.max_map_height - 1:
-                    row.append('W')
-                else:
-                    if random.random() < 0.05:  # Adjust the probability as needed
-                        row.append('W')
-                    else:
-                        row.append('.')
-            self.map.append(row)
+        # for y in range(self.max_map_height):
+        #     row = []
+        #     for x in range(self.max_map_width):
+        #         if x == 0 or x == self.max_map_width - 1 or y == 0 or y == self.max_map_height - 1:
+        #             row.append('W')
+        #         else:
+        #             if random.random() < 0.05:  # Adjust the probability as needed
+        #                 row.append('W')
+        #             else:
+        #                 row.append('.')
+        #     self.map.append(row)
+        
+        self.map = [
+            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+            ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
+            ['W', '.', '.', 'W', 'W', 'W', '.', '.', '.', 'W', '.', 'W'],
+            ['W', 'W', '.', '.', 'W', '.', '.', '.', '.', '.', '.', 'W'],
+            ['W', '.', '.', '.', '.', '.', '.', 'W', '.', '.', '.', 'W'],
+            ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
+            ['W', '.', '.', '.', 'W', '.', '.', '.', '.', '.', '.', 'W'],
+            ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
+            ['W', '.', '.', '.', 'W', '.', '.', '.', '.', 'W', '.', 'W'],
+            ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
+            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W']
+        ]
+        
         return self.map
     
     def generate_world_map(self):

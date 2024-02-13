@@ -7,6 +7,7 @@ from sprite import *
 from object_renderer import *
 from object_handler import *
 from weapon import *
+from pathfinding import *
 import pygame
 import math
 import time
@@ -29,6 +30,7 @@ class Game:
         self.player.set_map(self.map.map)
         self.raycasting = Raycasting(self)
         self.weapon = Weapon(self)
+        self.pathfinding = Pathfinding(self)
         self.object_handler = ObjectHandler(self)
         self.object_renderer = ObjectRenderer(self)
         self.debug = Debug(self)

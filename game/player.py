@@ -11,6 +11,7 @@ class Player:
         self.player_speed = 150
         self.rel = None
         self.shot = False
+        self.health = 100
         
     @property
     def pos(self):
@@ -61,7 +62,7 @@ class Player:
         self.angle += (self.rel * MOUSE_SENSITIVITY * dt) 
         self.angle = self.angle % (math.tau)
     
-    def check_collision(self, x, y): # Taille du joueur
+    def check_collision(self, x, y):
         map_x, map_y = int(x // CELL_SIZE), int(y // CELL_SIZE)
         if (0 <= map_x < len(self.game.map.map[0])) and (0 <= map_y < len(self.game.map.map[1])):
             if self.map[map_y][map_x] == 'W':

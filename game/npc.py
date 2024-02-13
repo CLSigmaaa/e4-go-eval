@@ -6,15 +6,15 @@ class NPC(AnimatedSprite):
     def __init__(self, game, pos, path, height_shift=30, animation_time=120) -> None:
         super().__init__(game, pos, path, height_shift, animation_time)
         
-        # self.attack_images = self.get_images(self.path + '/attack')
-        # self.death_images = self.get_images(self.path + '/death')
-        # self.idle_images = self.get_images(self.path + '/idle')
-        # self.pain_images = self.get_images(self.path + '/pain')
-        # self.walk_images = self.get_images(self.path + '/walk')
+        self.attack_images = self.get_images(self.path + '/attack')
+        self.death_images = self.get_images(self.path + '/death')
+        self.idle_images = self.get_images(self.path + '/idle')
+        self.pain_images = self.get_images(self.path + '/pain')
+        self.walk_images = self.get_images(self.path + '/walk')
 
         self.attack_dist = random.randint(3, 6)
-        self.speed = 0.03
-        self.size = 20
+        self.speed = 1
+        self.size = 50
         self.health = 100
         self.attack_damage = 10
         self.accuracy = 0.15
@@ -23,7 +23,6 @@ class NPC(AnimatedSprite):
         self.ray_cast_value = False
         self.frame_counter = 0
         self.player_search_trigger = False
-        self.is_npc_visible = False
     
     @property
     def pos(self):
@@ -87,18 +86,93 @@ class NPC(AnimatedSprite):
         wall_dist = max(wall_dist_v, wall_dist_h)
 
         if 0 < player_dist < wall_dist or not wall_dist:
-            self.is_npc_visible = True
             return True
-        self.is_npc_visible = False
         return False
     
+    def check_hit_in_npc(self):
+        if self.ray_cast_value and self.game.player.shot:
+            if HALF_WIDTH - self.half_sprite_width < self.screen_x < HALF_WIDTH + self.half_sprite_width:
+                self.player.shot = False
+                self.health -= self.game.weapon.damage
+                self.pain = True
+                self.check_health()
+    
+    def check_health(self):
+        if self.health <= 0:
+            self.alive = False
+    
+    # def animate_death(self):
+    #     if not self.alive:
+    #         if self.game.global_trigger and self.frame_counter < len(self.death_images) - 1:
+    #             self.death_images.rotate(-1)
+    #             self.image = self.death_images[0]
+    #             self.frame_counter += 1
+    
+    def animate_pain(self):
+        self.animate(self.pain_images)
+        if self.animation_trigger:
+            self.pain = False
+    
+    def check_wall(self, x, y):
+        return (x, y) not in self.game.map.world_map
+
+    def check_wall_collision(self, dx, dy):
+        if self.check_wall(int((self.x + dx * self.size) // CELL_SIZE) * CELL_SIZE, int((self.y // CELL_SIZE) * CELL_SIZE)):
+            self.x += dx
+        if self.check_wall(int((self.x // CELL_SIZE) * CELL_SIZE), int((self.y + dy * self.size) // CELL_SIZE) * CELL_SIZE):
+            self.y += dy
+    
+    def movement(self):
+        next_pos = self.game.pathfinding.bfs(self.map_pos, self.game.player.map_pos)
+        print('next_pos : ' + str(next_pos))
+        if next_pos is None:
+            return
+        next_pos = next_pos[0]
+        next_x, next_y = next_pos
+        next_x, next_y = next_x * CELL_SIZE, next_y * CELL_SIZE
+        
+        angle = math.atan2(next_y + HALF_CELL_SIZE - self.y, next_x + HALF_CELL_SIZE - self.x)
+        dx = math.cos(angle) * self.speed
+        dy = math.sin(angle) * self.speed
+        self.check_wall_collision(dx, dy)
+    
+    def attack(self):
+        if self.animation_trigger:
+            if random.random() < self.accuracy:
+                self.game.player.health -= self.attack_damage
+    
     def run_logic(self):
-        self.ray_cast_player_npc()  # Call the method instead of assigning a boolean value
-        font = pygame.font.SysFont('Arial', 20, bold=True)
-        text_is_visible = font.render('Is visible by the player : ' + str(self.is_npc_visible), True, pygame.Color('white'))  # Call the method to get the updated value
-        self.game.screen.blit(text_is_visible, (10, 120))
+        if self.alive:
+            self.ray_cast_value = self.ray_cast_player_npc()
+            self.check_hit_in_npc()
+
+            if self.pain:
+                self.animate_pain()
+
+            elif self.ray_cast_value:
+                self.player_search_trigger = True
+
+                if self.distance_to_player < self.attack_dist:
+                    self.animate(self.attack_images)
+                    self.attack()
+                else:
+                    self.animate(self.walk_images)
+                    self.movement()
+
+            elif self.player_search_trigger:
+                self.animate(self.walk_images)
+                self.movement()
+
+            else:
+                self.animate(self.idle_images)
+        else:
+            self.animate_death()
     
     def update(self):
         self.check_animation_time()
         self.get_sprite()
         self.run_logic()
+
+class SoldierNPC(NPC):
+    def __init__(self, game, pos, path='./ressources/sprites/npc/soldier/0.png', height_shift=30, animation_time=120) -> None:
+        super().__init__(game, pos, path, height_shift, animation_time)
