@@ -51,7 +51,7 @@ class Raycasting:
         curr_angle = self.player.angle - HALF_FOV + 1e-6
         
         # On itère le nombre de rayons
-        for ray in range(NUM_RAYS):
+        for _ in range(NUM_RAYS):
             # On calcule le cosinus et le sinus de l'angle actuel
             sin_a = math.sin(curr_angle)
             cos_a = math.cos(curr_angle)
@@ -96,7 +96,24 @@ class Raycasting:
         self.screen.blit(self.sky_texture, (-sky_offset + WIDTH, 0))
     
     def draw(self):
+        # self.no_ray_cast()
         self.sky_casting()
         self.floor_casting()
         self.wall_casting()
         self.get_objects_to_render()
+        
+    
+    # def no_ray_cast(self):
+        # # draw the player
+        # pygame.draw.circle(self.screen, (255, 255, 255), (int(self.player.x), int(self.player.y)), 10)
+        
+        # # draw the self.player direction
+        # pygame.draw.line(self.screen, (255, 255, 255), self.player.pos, (self.player.x + WIDTH * math.cos(self.player.angle), self.player.y + WIDTH * math.sin(self.player.angle)))
+        
+        # # draw the self.player FOV
+        # pygame.draw.line(self.screen, (255, 255, 255), self.player.pos, (self.player.x + WIDTH * math.cos(self.player.angle + HALF_FOV), self.player.y + WIDTH * math.sin(self.player.angle + HALF_FOV)))
+        # pygame.draw.line(self.screen, (255, 255, 255), self.player.pos, (self.player.x + WIDTH * math.cos(self.player.angle - HALF_FOV), self.player.y + WIDTH * math.sin(self.player.angle - HALF_FOV)))
+        
+        # # draw the walls
+        # for x, y in self.world_map:
+        #     pygame.draw.rect(self.screen, (255, 255, 255), (x, y, CELL_SIZE, CELL_SIZE), 2)

@@ -19,6 +19,7 @@ class Sprite:
         self.height_shift = height_shift
         self.screen_x = 0
         self.distance_to_player = 1e-6
+        self.theta = 0
     
     
     def get_sprite_projection(self):
@@ -41,11 +42,11 @@ class Sprite:
     
     def get_sprite(self):
         dx, dy = self.x - self.player.x, self.y - self.player.y
-        theta = math.atan2(dy, dx)
+        self.theta = math.atan2(dy, dx)
         
         
         
-        delta = (theta - self.player.angle)
+        delta = (self.theta - self.player.angle)
         
         # TODO: Fix the sky clipping when delta angle is out of range
         if delta < -math.pi:
