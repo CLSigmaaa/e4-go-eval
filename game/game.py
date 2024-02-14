@@ -8,9 +8,12 @@ from object_renderer import *
 from object_handler import *
 from weapon import *
 from pathfinding import *
+from websocket_client import *
 import pygame
 import math
 import time
+import uuid
+from websocket import WebSocketConnectionClosedException
 
 class Game:
     def __init__(self) -> None:
@@ -20,6 +23,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.delta_time = 1
         self.prev_time = time.time()
+        self.game_id = str(uuid.uuid4())
         self.new_game()
         
     def new_game(self):
@@ -30,10 +34,13 @@ class Game:
         self.player.set_map(self.map.map)
         self.raycasting = Raycasting(self)
         self.weapon = Weapon(self)
-        self.pathfinding = Pathfinding(self)
+        self.pathfinding = PathFinding(self)
         self.object_handler = ObjectHandler(self)
+        self.object_handler.spawn_npc()
         self.object_renderer = ObjectRenderer(self)
         self.debug = Debug(self)
+        self.ws_client = WebSocketClient(self, "ws://localhost:8080/ws")
+        
     
     def check_events(self):
         for event in pygame.event.get():
@@ -52,7 +59,23 @@ class Game:
         self.weapon.update()
         self.map.draw()
         self.debug.draw()
-        pygame.display.flip()
+        try:
+            self.ws_client.send(
+                {
+                    "game_id": self.game_id,
+                    "player": {
+                        "position": {
+                            "x": self.player.x,
+                            "y": self.player.y
+                        },
+                        "health": self.player.health,
+                    }
+                }
+            )
+        except WebSocketConnectionClosedException as e:
+            print(f"WebSocket connection closed: {e}")
+        finally:
+            pygame.display.flip()
     
     def run(self):
         while True:

@@ -3,26 +3,26 @@ from sprite import *
 import random
 
 class NPC(AnimatedSprite):
-    def __init__(self, game, pos, path, height_shift=30, animation_time=120) -> None:
-        super().__init__(game, pos, path, height_shift, animation_time)
-        
+    def __init__(self, game, pos, attack_dist, size, health, attack_damage, accuracy, speed, path='./ressources/sprites/static/candlebra.png', height_shift=0.27, scale=0.6, animation_time=120) -> None:
+        super().__init__(game, pos, path, height_shift, scale, animation_time)
         self.attack_images = self.get_images(self.path + '/attack')
         self.death_images = self.get_images(self.path + '/death')
         self.idle_images = self.get_images(self.path + '/idle')
         self.pain_images = self.get_images(self.path + '/pain')
         self.walk_images = self.get_images(self.path + '/walk')
 
-        self.attack_dist = random.randint(3, 6)
-        self.speed = 1
-        self.size = 50
-        self.health = 100
-        self.attack_damage = 10
-        self.accuracy = 0.15
+        self.attack_dist = attack_dist
+        self.speed = speed
+        self.size = size
+        self.health = health
+        self.attack_damage = attack_damage
+        self.accuracy = accuracy
         self.alive = True
         self.pain = False
         self.ray_cast_value = False
         self.frame_counter = 0
         self.player_search_trigger = False
+        
     
     @property
     def pos(self):
@@ -54,7 +54,7 @@ class NPC(AnimatedSprite):
         sin_a = math.sin(curr_angle)
         cos_a = math.cos(curr_angle)
 
-        y, dy = (y_map + CELL_SIZE, 1) if sin_a >= 0 else (y_map, -1)
+        y, dy = (y_map + CELL_SIZE, 1) if sin_a > 0 else (y_map, -1)
         for _ in range(0, HEIGHT, CELL_SIZE):
             depth_h = (y - oy) / sin_a
             x = ox + depth_h * cos_a
@@ -68,7 +68,7 @@ class NPC(AnimatedSprite):
                 break
             y += dy * CELL_SIZE
         
-        x, dx = (x_map + CELL_SIZE, 1) if cos_a >= 0 else (x_map, -1)
+        x, dx = (x_map + CELL_SIZE, 1) if cos_a > 0 else (x_map, -1)
         for _ in range(0, WIDTH, CELL_SIZE):
             depth_v = (x - ox) / cos_a
             y = oy + depth_v * sin_a
@@ -91,7 +91,7 @@ class NPC(AnimatedSprite):
     
     def check_hit_in_npc(self):
         if self.ray_cast_value and self.game.player.shot:
-            if HALF_WIDTH - self.half_sprite_width < self.screen_x < HALF_WIDTH + self.half_sprite_width:
+            if HALF_WIDTH - self.sprite_width < self.screen_x < HALF_WIDTH + self.sprite_width:
                 self.player.shot = False
                 self.health -= self.game.weapon.damage
                 self.pain = True
@@ -123,11 +123,7 @@ class NPC(AnimatedSprite):
             self.y += dy
     
     def movement(self):
-        next_pos = self.game.pathfinding.bfs(self.map_pos, self.game.player.map_pos)
-        print('next_pos : ' + str(next_pos))
-        if next_pos is None:
-            return
-        next_pos = next_pos[0]
+        next_pos = self.game.pathfinding.get_path(self.map_pos, self.game.player.map_pos)
         next_x, next_y = next_pos
         next_x, next_y = next_x * CELL_SIZE, next_y * CELL_SIZE
         
@@ -173,6 +169,15 @@ class NPC(AnimatedSprite):
         self.get_sprite()
         self.run_logic()
 
+
 class SoldierNPC(NPC):
-    def __init__(self, game, pos, path='./ressources/sprites/npc/soldier/0.png', height_shift=30, animation_time=120) -> None:
-        super().__init__(game, pos, path, height_shift, animation_time)
+    def __init__(self, game, pos, attack_dist= CELL_SIZE * 2.5, size=50, health=30, attack_damage=10, accuracy=0.05, speed=1.75, path='./ressources/sprites/npc/soldier/0.png', height_shift=0.30, scale=0.75, animation_time=120) -> None:
+        super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, path, height_shift, scale, animation_time)
+
+class CacoNPC(NPC):
+    def __init__(self, game, pos, attack_dist=CELL_SIZE, size=50, health=40, attack_damage=5, accuracy=0.15, speed=2, path='./ressources/sprites/npc/caco_demon/0.png', height_shift=0.10, scale=0.7, animation_time=120) -> None:
+        super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, path, height_shift, scale, animation_time)
+
+class CyberDemonNPC(NPC):
+    def __init__(self, game, pos, attack_dist=CELL_SIZE * 7, size=50, health=100, attack_damage=15, accuracy=0.15, speed=1, path='./ressources/sprites/npc/cyber_demon/0.png', height_shift=0.05, scale=1.15, animation_time=240) -> None:
+        super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, path, height_shift, scale, animation_time)

@@ -9,8 +9,11 @@ class Map:
         self.map = []
         self.world_map = set()
         self.mini_map = set()
+        self.second_world_map = {}
+        self.ennemies_map = {}
         self.max_map_width = WIDTH // CELL_SIZE
         self.max_map_height = HEIGHT // CELL_SIZE
+        self.mini_map_surface = pygame.Surface((WIDTH // MINI_MAP_SCALE, (HEIGHT // MINI_MAP_SCALE)))
         
     def generate_basic_map(self):
         # for y in range(self.max_map_height):
@@ -26,17 +29,28 @@ class Map:
         #     self.map.append(row)
         
         self.map = [
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
-            ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
-            ['W', '.', '.', 'W', 'W', 'W', '.', '.', '.', 'W', '.', 'W'],
-            ['W', 'W', '.', '.', 'W', '.', '.', '.', '.', '.', '.', 'W'],
-            ['W', '.', '.', '.', '.', '.', '.', 'W', '.', '.', '.', 'W'],
-            ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
-            ['W', '.', '.', '.', 'W', '.', '.', '.', '.', '.', '.', 'W'],
-            ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
-            ['W', '.', '.', '.', 'W', '.', '.', '.', '.', 'W', '.', 'W'],
-            ['W', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'W'],
-            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W']
+            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
+            ['W', ' ', 'W', ' ', 'W', 'Y', ' ', ' ', 'W', ' ', ' ', 'Y', 'W', ' ', ' ', 'X', ' ', 'W', ' ', 'W', ' ', ' ', 'Y', 'W', ' ', 'W', 'Z', 'W'],
+            ['W', ' ', 'W', ' ', 'W', 'W', 'W', ' ', ' ', ' ', 'W', 'W', 'W', ' ', ' ', 'W', ' ', ' ', 'W', ' ', ' ', 'W', 'W', ' ', ' ', 'W', 'Z', 'W'],
+            ['W', ' ', ' ', ' ', 'W', ' ', ' ', ' ', 'W', 'W', ' ', 'W', 'W', ' ', 'W', ' ', 'W', 'W', ' ', ' ', 'W', ' ', ' ', 'W', ' ', 'W', ' ', 'W'],
+            ['W', ' ', 'W', ' ', 'W', 'Y', 'W', ' ', ' ', 'X', ' ', ' ', 'W', ' ', 'W', ' ', ' ', 'Y', 'W', ' ', 'X', 'W', 'W', ' ', 'W', 'W', 'X', 'W'],
+            ['W', 'W', ' ', ' ', 'W', 'W', ' ', ' ', 'W', 'W', ' ', ' ', 'W', ' ', ' ', ' ', 'W', 'W', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W', 'X', 'W'],
+            ['W', 'Y', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' ', 'W', ' ', ' ', 'X', 'W', ' ', 'W', ' ', 'W', 'W', ' ', 'W', 'W', ' ', ' ', 'W', 'X', 'W'],
+            ['W', ' ', 'X', 'W', ' ', 'W', ' ', ' ', 'W', ' ', ' ', 'W', 'W', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', ' ', 'W', ' ', 'W', 'X', 'W'],
+            ['W', ' ', ' ', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' ', 'W', 'Y', 'W', ' ', 'W', ' ', 'W'],
+            ['W', ' ', ' ', 'X', ' ', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' ', ' ', 'W', ' ', 'W', 'W', ' ', 'W', ' ', 'W', 'W', 'W', ' ', 'W', 'Y', 'W'],
+            ['W', 'W', 'W', 'W', 'W', 'Y', 'W', ' ', 'W', 'W', 'W', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', 'W', 'W', ' ', ' ', ' ', 'W', 'Y', 'W'],
+            ['W', ' ', 'W', ' ', 'W', ' ', 'Y', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', ' ', ' ', 'W', 'W', ' ', ' ', 'W', 'W', ' ', 'W', 'Y', 'W'],
+            ['W', ' ', ' ', ' ', ' ', ' ', 'W', ' ', ' ', 'W', ' ', 'W', ' ', ' ', 'W', ' ', 'W', ' ', ' ', ' ', ' ', 'W', ' ', ' ', ' ', 'W', ' ', 'W'],
+            ['W', ' ', 'W', 'W', ' ', 'W', ' ', ' ', 'W', ' ', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' ', ' ', 'W', ' ', ' ', ' ', 'W', 'Z', 'W', ' ', 'W'],
+            ['W', ' ', ' ', ' ', 'W', ' ', ' ', 'W', ' ', ' ', ' ', 'W', 'W', 'W', ' ', ' ', ' ', ' ', 'W', ' ', 'W', 'W', ' ', ' ', 'W', 'W', ' ', 'W'],
+            ['W', ' ', 'W', 'W', 'X', 'W', ' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', 'W', ' ', 'W', 'W', ' ', ' ', ' ', 'W', 'W', 'W', ' ', 'W', ' ', 'W'],
+            ['W', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' ', ' ', 'W', ' ', ' ', ' ', ' ', 'W', ' ', 'W'],
+            ['W', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'Z', ' ', 'W', ' ', ' ', 'W', 'W', ' ', 'W', ' ', 'W'],
+            ['W', ' ', ' ', 'W', ' ', 'W', ' ', ' ', 'W', ' ', ' ', 'W', ' ', 'W', ' ', 'W', ' ', ' ', 'W', 'W', ' ', ' ', ' ', ' ', ' ', 'W', ' ', 'W'],
+            ['W', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', 'Z', ' ', ' ', 'W', ' ', 'W', 'W', 'W', ' ', 'W'],
+            ['W', ' ', 'Z', ' ', ' ', ' ', 'W', ' ', ' ', ' ', ' ', ' ', 'Z', ' ', ' ', ' ', 'W', ' ', ' ', ' ', 'W', ' ', ' ', 'Z', ' ', ' ', 'Y', 'W'],
+            ['W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'],
         ]
         
         return self.map
@@ -46,21 +60,29 @@ class Map:
             for i, char in enumerate(row):
                 if char == 'W':
                     self.world_map.add((i * CELL_SIZE, j * CELL_SIZE))
+                    self.second_world_map[(i, j)] = 'W'
                     self.mini_map.add((i * MINI_MAP_TILE, j * MINI_MAP_TILE))
+                elif char == 'X':
+                    self.ennemies_map[(i * CELL_SIZE + HALF_CELL_SIZE // 2, j * CELL_SIZE + HALF_CELL_SIZE // 2)] = 'X'
+                elif char == 'Y':
+                    self.ennemies_map[(i * CELL_SIZE + HALF_CELL_SIZE // 2, j * CELL_SIZE + HALF_CELL_SIZE // 2)] = 'Y'
+                elif char == 'Z':
+                    self.ennemies_map[(i * CELL_SIZE + HALF_CELL_SIZE // 2, j * CELL_SIZE + HALF_CELL_SIZE // 2)] = 'Z'
     
     def draw(self):
+        pass
         # Create a surface for the mini map
-        mini_map_surface = pygame.Surface((WIDTH // MINI_MAP_SCALE, (HEIGHT // MINI_MAP_SCALE)))
+        # self.mini_map_surface.fill((0, 0, 0))
         
-        # set the alpha
-        mini_map_surface.set_alpha(300)
+        # # set the alpha
+        # self.mini_map_surface.set_alpha(300)
         
-        # draw the player
-        pygame.draw.circle(mini_map_surface, pygame.Color('red'), (int(self.player.x // MINI_MAP_SCALE), int(self.player.y // MINI_MAP_SCALE)), 5)
+        # # draw the player
+        # pygame.draw.circle(self.mini_map_surface, pygame.Color('red'), (int(self.player.x // MINI_MAP_SCALE), int(self.player.y // MINI_MAP_SCALE)), 5)
         
-        # draw the walls
-        for x, y in self.mini_map:
-            pygame.draw.rect(mini_map_surface, (255, 255, 255), (x, y, MINI_MAP_TILE, MINI_MAP_TILE), 2)
+        # # draw the walls
+        # for x, y in self.mini_map:
+        #     pygame.draw.rect(self.mini_map_surface, (255, 255, 255), (x, y, MINI_MAP_TILE, MINI_MAP_TILE), 2)
 
-        # Draw the mini map on the screen
-        self.screen.blit(mini_map_surface, MINI_MAP_POS)
+        # # Draw the mini map on the screen
+        # self.screen.blit(self.mini_map_surface, MINI_MAP_POS)

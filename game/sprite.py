@@ -5,7 +5,7 @@ import os
 import math
 
 class Sprite:
-    def __init__(self, game, pos, path='./ressources/sprites/static/candlebra.png', height_shift=0.27) -> None:
+    def __init__(self, game, pos, path='./ressources/sprites/static/candlebra.png', height_shift=0.27, scale=0.6) -> None:
         self.game = game
         self.player = game.player
         self.raycasting = game.raycasting
@@ -19,12 +19,13 @@ class Sprite:
         self.height_shift = height_shift
         self.screen_x = 0
         self.distance_to_player = 1e-6
+        self.SPRITE_SCALE = scale
         self.theta = 0
     
     
     def get_sprite_projection(self):
         self.distance_to_player = max(self.distance_to_player, 1e-6)
-        proj_height = (WALL_HEIGHT / self.distance_to_player) * WALL_HEIGHT
+        proj_height = (WALL_HEIGHT / self.distance_to_player * self.SPRITE_SCALE) * WALL_HEIGHT
 
         if not proj_height > WIDTH:
             sprite_height = proj_height
@@ -69,14 +70,14 @@ class Sprite:
 
 
 class AnimatedSprite(Sprite):
-    def __init__(self, game, pos, path, height_shift=30, animation_time=120) -> None:
-        super().__init__(game, pos, path, height_shift)
+    def __init__(self, game, pos, path='./ressources/sprites/static/candlebra.png', height_shift=0.27, scale=0.6, animation_time=120) -> None:
+        super().__init__(game, pos, path, height_shift, scale)
         self.animation_time = animation_time
         self.path = path.rsplit('/', 1)[0]
         self.images = self.get_images(self.path)
         self.prev_animation_time = pygame.time.get_ticks()
         self.animation_trigger = False
-    
+        
     def update(self):
         super().update()
         self.check_animation_time()
