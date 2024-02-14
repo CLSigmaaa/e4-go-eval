@@ -9,8 +9,8 @@ from object_handler import *
 from weapon import *
 from pathfinding import *
 from websocket_client import *
+from sound import *
 import pygame
-import math
 import time
 import uuid
 from websocket import WebSocketConnectionClosedException
@@ -27,6 +27,7 @@ class Game:
         self.new_game()
         
     def new_game(self):
+        self.sound = Sound(self)
         self.player = Player(self)
         self.map = Map(self, self.player)
         self.map.generate_basic_map()
@@ -74,7 +75,7 @@ class Game:
                 }
             )
         except WebSocketConnectionClosedException as e:
-            print(f"WebSocket connection closed: {e}")
+            pass
         finally:
             pygame.display.flip()
     

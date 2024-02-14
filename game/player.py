@@ -24,6 +24,11 @@ class Player:
     def get_rel(self):
         return self.rel
     
+    def get_damage(self, damage):
+        self.health -= damage
+        self.game.sound.player_pain.play()
+        # self.check_game_over()
+    
     def movement(self, dt):
         cos_a = math.cos(self.angle)
         sin_a = math.sin(self.angle)
@@ -94,6 +99,7 @@ class Player:
     def check_fire_weapon(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1 and not self.shot and not self.game.weapon.reloading:
+                self.game.sound.shotgun.play()
                 self.shot = True
                 self.game.weapon.reloading = True
     

@@ -94,6 +94,7 @@ class NPC(AnimatedSprite):
     def check_hit_in_npc(self):
         if self.ray_cast_value and self.game.player.shot:
             if HALF_WIDTH - self.sprite_width < self.screen_x < HALF_WIDTH + self.sprite_width:
+                self.game.sound.npc_pain.play()
                 self.player.shot = False
                 self.health -= self.game.weapon.damage
                 self.pain = True
@@ -109,7 +110,7 @@ class NPC(AnimatedSprite):
     def check_health(self):
         if self.health <= 0:
             self.alive = False
-            
+            self.game.sound.npc_death.play()
         
     def animate_pain(self):
         self.animate(self.pain_images)
@@ -137,8 +138,9 @@ class NPC(AnimatedSprite):
     
     def attack(self):
         if self.animation_trigger:
+            self.game.sound.npc_shot.play()
             if random.random() < self.accuracy:
-                self.game.player.health -= self.attack_damage
+                self.game.player.get_damage(self.attack_damage)
     
     def run_logic(self):
         if self.alive:
