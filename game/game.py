@@ -69,7 +69,8 @@ class Game:
                             "y": self.player.y
                         },
                         "health": self.player.health,
-                    }
+                    },
+                    "npcs": [npc.get_info() for npc in self.object_handler.npcs],
                 }
             )
         except WebSocketConnectionClosedException as e:
