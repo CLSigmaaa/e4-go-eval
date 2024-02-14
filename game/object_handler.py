@@ -8,6 +8,7 @@ class ObjectHandler:
         self.objects = []
         self.sprites = []
         self.npcs = []
+        self.npc_positions = {}
         # self.add_sprite(Sprite(self.game, (WIDTH // 3, HALF_HEIGHT), height_shift=0.12))
         # self.add_sprite(AnimatedSprite(self.game, (WIDTH // 4, HALF_HEIGHT), './ressources/sprites/animated/red_light/0.png', height_shift=0.1))
         
@@ -16,10 +17,7 @@ class ObjectHandler:
         
     
     def spawn_npc(self):
-        # self.add_npc(SoldierNPC(self.game, (150, 1950)))
-       # Iterate over the dictionary
         for pos, npc in self.game.map.ennemies_map.items():
-            print(pos, npc)
             if npc == 'Z':
                 self.add_npc(CyberDemonNPC(self.game, pos))
             elif npc == 'Y':
@@ -34,5 +32,6 @@ class ObjectHandler:
         self.npcs.append(npc)
     
     def update(self):
+        self.npc_positions = {npc.map_pos for npc in self.npcs if npc.alive}
         [sprite.update() for sprite in self.sprites]
         [npc.update() for npc in self.npcs]

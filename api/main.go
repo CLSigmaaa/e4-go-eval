@@ -27,7 +27,7 @@ type NPC struct {
 type Game struct {
 	ID     string `json:"game_id"`
 	Player Player `json:"player"`
-	// NPC    []NPC  `json:"npc"`
+	NPCS   []NPC  `json:"npcs"`
 }
 
 type GameRepository struct {
@@ -56,8 +56,6 @@ func reader(conn *websocket.Conn) {
 			log.Println(err)
 			return
 		}
-
-		// log.Println(string(msg))
 
 		// Unmarshal the JSON string into a Game object
 		var game Game
