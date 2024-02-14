@@ -97,17 +97,18 @@ class NPC(AnimatedSprite):
                 self.pain = True
                 self.check_health()
     
+    def animate_death(self):
+        if not self.alive:
+            if self.frame_counter < len(self.death_images) - 1:
+                self.death_images.rotate(-1)
+                self.sprite = self.death_images[0]
+                self.frame_counter += 1
+    
     def check_health(self):
         if self.health <= 0:
             self.alive = False
-    
-    # def animate_death(self):
-    #     if not self.alive:
-    #         if self.game.global_trigger and self.frame_counter < len(self.death_images) - 1:
-    #             self.death_images.rotate(-1)
-    #             self.image = self.death_images[0]
-    #             self.frame_counter += 1
-    
+            
+        
     def animate_pain(self):
         self.animate(self.pain_images)
         if self.animation_trigger:
@@ -179,5 +180,5 @@ class CacoNPC(NPC):
         super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, path, height_shift, scale, animation_time)
 
 class CyberDemonNPC(NPC):
-    def __init__(self, game, pos, attack_dist=CELL_SIZE * 7, size=50, health=100, attack_damage=15, accuracy=0.15, speed=1, path='./ressources/sprites/npc/cyber_demon/0.png', height_shift=0.05, scale=1.15, animation_time=240) -> None:
+    def __init__(self, game, pos, attack_dist=CELL_SIZE * 6, size=50, health=100, attack_damage=15, accuracy=0.15, speed=1, path='./ressources/sprites/npc/cyber_demon/0.png', height_shift=0.05, scale=1.15, animation_time=240) -> None:
         super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, path, height_shift, scale, animation_time)
