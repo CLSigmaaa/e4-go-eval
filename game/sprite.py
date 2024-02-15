@@ -27,7 +27,7 @@ class Sprite:
         self.distance_to_player = max(self.distance_to_player, 1e-6)
         proj_height = (WALL_HEIGHT / self.distance_to_player * self.SPRITE_SCALE) * WALL_HEIGHT
 
-        if not proj_height > WIDTH // 2:
+        if not proj_height > WIDTH:
             sprite_height = proj_height
             sprite_width = sprite_height* self.ratio
 

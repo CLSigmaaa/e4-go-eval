@@ -41,7 +41,7 @@ class Game:
         self.object_renderer = ObjectRenderer(self)
         self.debug = Debug(self)
         self.ws_client = WebSocketClient(self, "ws://localhost:8080/ws")
-        
+        pygame.mixer.music.play(-1)
     
     def check_events(self):
         for event in pygame.event.get():
