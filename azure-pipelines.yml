@@ -38,4 +38,4 @@ stages:
           deploy:
             steps:
             - script: |
-                docker run  -p 3000:3000 --name api_websocket_raycasting$(Build.BuildId) -d shinratsu/raycasting:latest
+                docker run  -p 8080:8080 --name api_websocket_raycasting$(Build.BuildId) -d shinratsu/raycasting:latest
