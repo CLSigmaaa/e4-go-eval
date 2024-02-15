@@ -1,17 +1,24 @@
-# Utilisation de l'image officielle de Go 1.16.6 comme image de base
+# Start from the latest golang base image
 FROM golang:1.21.6
 
-# Définir le répertoire de travail à l'intérieur du conteneur
+
+# Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Copier le contenu de votre application Go dans le conteneur
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+RUN go mod download
+
+# Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
-# Compiler l'application
+# Build the Go app
 RUN go build -o main .
 
-# Exposer le port sur lequel votre application écoute
-EXPOSE 3000
+# Expose port 8080 to the outside world
+EXPOSE 8080
 
-# Commande à exécuter lors du démarrage du conteneur
+# Command to run the executable
 CMD ["./main"]
