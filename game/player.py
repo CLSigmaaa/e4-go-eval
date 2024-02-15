@@ -29,7 +29,12 @@ class Player:
     def get_damage(self, damage):
         self.health -= damage
         self.game.sound.player_pain.play()
-        # self.check_game_over()
+        self.check_game_over()
+    
+    def check_game_over(self):
+        if self.health <= 0:
+            pygame.quit()
+            exit()
     
     def recover_health(self):
         if self.check_health_recovery_delay() and self.health < 100:

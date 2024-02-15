@@ -6,7 +6,7 @@ class PathFinding:
     def __init__(self, game):
         self.game = game
         self.map = game.map.map
-        self.ways = [-1, 0], [0, -1], [1, 0], [0, 1], [-1, -1], [1, -1], [1, 1], [-1, 1]
+        self.ways = [-1, 0], [0, -1], [1, 0], [0, 1], [1, -1], [-1, 1]
         self.graph = {}
         self.get_graph()
 
@@ -45,6 +45,5 @@ class PathFinding:
     def get_graph(self):
         for y, row in enumerate(self.map):
             for x, col in enumerate(row):
-                if self.map[y][x] == ' ' or self.map[y][x] == 'X' or self.map[y][x] == 'Y' or self.map[y][x] == 'Z':
+                if self.map[y][x] != 'W':
                     self.graph[(x, y)] = self.graph.get((x, y), []) + self.get_next_nodes(x, y)
-        print(self.graph)
