@@ -56,10 +56,11 @@ class Game:
         self.object_handler.update()
         self.object_renderer.render_game_objects()
         self.object_renderer.draw_crosshair()
+        self.object_renderer.draw_player_health()
         self.weapon.draw()
         self.weapon.update()
         self.map.draw()
-        self.debug.draw()
+        # self.debug.draw()
         try:
             self.ws_client.send(
                 {
