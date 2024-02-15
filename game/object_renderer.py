@@ -14,12 +14,15 @@ class ObjectRenderer:
         self.digit_images = [self.get_texture(f'./ressources/textures/digits/{i}.png', [self.digit_size] * 2)
                              for i in range(11)]
         self.digits = dict(zip(map(str, range(11)), self.digit_images))
+        self.win_image = self.get_texture('./ressources/textures/win.png', (WIDTH, HEIGHT))
         
+    
+    def win(self):
+        self.screen.blit(self.win_image, (0, 0))
+     
     def render_game_objects(self):
-        # print(self.raycasting.objects_to_render)
         list_objects = sorted(self.raycasting.objects_to_render, key=lambda t: t[0], reverse=True)
-        # print(list_objects)
-        for depth, image, pos in list_objects:
+        for _, image, pos in list_objects:
             self.screen.blit(image, pos)
     
     def draw_crosshair(self):

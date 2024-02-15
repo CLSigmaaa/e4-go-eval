@@ -31,6 +31,13 @@ class ObjectHandler:
     def add_npc(self, npc):
         self.npcs.append(npc)
     
+    def check_win(self):
+        if not len(self.npc_positions) or self.game.player.map_pos == (24, 1):
+            self.game.object_renderer.win()
+            pygame.display.flip()
+            pygame.time.delay(1500)
+            self.game.new_game()
+    
     def update(self):
         self.npc_positions = {npc.map_pos for npc in self.npcs if npc.alive}
         [sprite.update() for sprite in self.sprites]
