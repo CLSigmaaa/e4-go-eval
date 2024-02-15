@@ -109,6 +109,20 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 
 func setupRoutes() {
 	http.HandleFunc("/", homePage)
+	http.HandleFunc("/games", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(gameRepository)
+	})
+	// get game by id
+	http.HandleFunc("/games/", func(w http.ResponseWriter, r *http.Request) {
+		id := r.URL.Path[len("/games/"):]
+		for _, game := range gameRepository.Games {
+			if game.ID == id {
+				json.NewEncoder(w).Encode(game)
+				return
+			}
+		}
+		http.Error(w, "Game not found", http.StatusNotFound)
+	})
 	http.HandleFunc("/ws", wsEndpoint)
 }
 
