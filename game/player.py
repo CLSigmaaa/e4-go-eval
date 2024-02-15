@@ -6,7 +6,7 @@ class Player:
     def __init__(self, game) -> None:
         self.map = None
         self.game = game
-        self.x, self.y = 150, 1900
+        self.x, self.y = 150, 150
         self.angle = 0
         self.player_speed = 150
         self.rel = None

@@ -185,14 +185,13 @@ class NPC(AnimatedSprite):
 
 
 class SoldierNPC(NPC):
-    def __init__(self, game, pos, attack_dist=CELL_SIZE * 2.5, size=50, health=30, attack_damage=10, accuracy=0.05, speed=1.75, type='soldier', path='./ressources/sprites/npc/soldier/0.png', height_shift=0.27, scale=0.6, animation_time=120) -> None:
+    def __init__(self, game, pos, attack_dist=CELL_SIZE * 2.5, size=50, health=30, attack_damage=10, accuracy=0.10, speed=1.75, type='soldier', path='./ressources/sprites/npc/soldier/0.png', height_shift=0.27, scale=0.6, animation_time=120) -> None:
         super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, type, path, height_shift, scale, animation_time)
 
-
 class CacoNPC(NPC):
-    def __init__(self, game, pos, attack_dist=CELL_SIZE, size=50, health=40, attack_damage=5, accuracy=0.15, speed=2, type='caco', path='./ressources/sprites/npc/caco_demon/0.png', height_shift=0.10, scale=0.7, animation_time=120) -> None:
+    def __init__(self, game, pos, attack_dist=CELL_SIZE, size=50, health=40, attack_damage=5, accuracy=0.35, speed=2, type='caco', path='./ressources/sprites/npc/caco_demon/0.png', height_shift=0.30, scale=0.6, animation_time=120) -> None:
         super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, type, path, height_shift, scale, animation_time)
 
 class CyberDemonNPC(NPC):
-    def __init__(self, game, pos, attack_dist=CELL_SIZE * 6, size=50, health=100, attack_damage=15, accuracy=0.15, speed=1, type='cyber_demon', path='./ressources/sprites/npc/cyber_demon/0.png', height_shift=0.05, scale=1.15, animation_time=240) -> None:
+    def __init__(self, game, pos, attack_dist=CELL_SIZE * 5, size=50, health=100, attack_damage=15, accuracy=0.10, speed=1, type='cyber_demon', path='./ressources/sprites/npc/cyber_demon/0.png', height_shift=0.05, scale=1.15, animation_time=240) -> None:
         super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, type, path, height_shift, scale, animation_time)
