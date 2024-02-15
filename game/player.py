@@ -12,6 +12,7 @@ class Player:
         self.rel = None
         self.shot = False
         self.health = 100
+        self.health_recovery_delay = 300
         
     @property
     def pos(self):
@@ -28,6 +29,16 @@ class Player:
         self.health -= damage
         self.game.sound.player_pain.play()
         # self.check_game_over()
+    
+    def recover_health(self):
+        if self.check_health_recovery_delay() and self.health < 100:
+            self.health += 1
+
+    def check_health_recovery_delay(self):
+        time_now = pygame.time.get_ticks()
+        if time_now - self.time_prev > self.health_recovery_delay:
+            self.time_prev = time_now
+            return True
     
     def movement(self, dt):
         cos_a = math.cos(self.angle)
@@ -110,3 +121,4 @@ class Player:
     def update(self, dt):
         self.movement(dt)
         self.mouse_control(dt)
+        self.recover_health()
