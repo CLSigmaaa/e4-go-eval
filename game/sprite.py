@@ -77,7 +77,8 @@ class AnimatedSprite(Sprite):
         self.images = self.get_images(self.path)
         self.prev_animation_time = pygame.time.get_ticks()
         self.animation_trigger = False
-        
+    
+    
     def update(self):
         super().update()
         self.check_animation_time()
