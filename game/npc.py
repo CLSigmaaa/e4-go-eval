@@ -193,5 +193,5 @@ class CacoNPC(NPC):
         super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, type, path, height_shift, scale, animation_time)
 
 class CyberDemonNPC(NPC):
-    def __init__(self, game, pos, attack_dist=CELL_SIZE * 5, size=20, health=100, attack_damage=15, accuracy=0.10, speed=1, type='cyber_demon', path='./ressources/sprites/npc/cyber_demon/0.png', height_shift=0.05, scale=1.15, animation_time=240) -> None:
+    def __init__(self, game, pos, attack_dist=CELL_SIZE * 5, size=40, health=100, attack_damage=15, accuracy=0.20, speed=1.05, type='cyber_demon', path='./ressources/sprites/npc/cyber_demon/0.png', height_shift=0.05, scale=1.15, animation_time=240) -> None:
         super().__init__(game, pos, attack_dist, size, health, attack_damage, accuracy, speed, type, path, height_shift, scale, animation_time)

@@ -12,7 +12,8 @@ class Player:
         self.rel = None
         self.shot = False
         self.health = 100
-        self.health_recovery_delay = 300
+        self.health_recovery_delay = 700
+        self.time_prev = pygame.time.get_ticks()
         
     @property
     def pos(self):
