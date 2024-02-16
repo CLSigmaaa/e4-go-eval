@@ -1,10 +1,11 @@
 import math
 
 # Window settings
-WIDTH = 1920
+WIDTH = 1300
 HALF_WIDTH = WIDTH // 2
-HEIGHT = 1080
+HEIGHT = 720
 HALF_HEIGHT = HEIGHT // 2
+# ASPECT_RATIO = WIDTH / HEIGHT
 
 # Ray casting settings
 FOV = math.pi / 3

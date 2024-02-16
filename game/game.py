@@ -20,6 +20,7 @@ class Game:
         pygame.init()
         pygame.mouse.set_visible(False)
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.event.set_grab(True)
         self.clock = pygame.time.Clock()
         self.delta_time = 1
         self.prev_time = time.time()
