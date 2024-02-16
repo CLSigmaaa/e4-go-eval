@@ -1,9 +1,9 @@
 import math
 
 # Window settings
-WIDTH = 1300
+WIDTH = 1920
 HALF_WIDTH = WIDTH // 2
-HEIGHT = 720
+HEIGHT = 1080
 HALF_HEIGHT = HEIGHT // 2
 # ASPECT_RATIO = WIDTH / HEIGHT
 
