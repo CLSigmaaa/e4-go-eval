@@ -32,7 +32,7 @@ class ObjectHandler:
         self.npcs.append(npc)
     
     def check_win(self):
-        if not len(self.npc_positions) or self.game.player.map_pos == (24, 1):
+        if not len(self.npc_positions) or self.game.player.map_pos == (26, 1):
             self.game.object_renderer.win()
             pygame.display.flip()
             pygame.time.delay(1500)
